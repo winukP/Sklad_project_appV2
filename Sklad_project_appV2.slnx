@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Sklad_project_app.Tests/Sklad_project_app.Tests.csproj" Id="e81e66e2-6acf-42c4-be32-4fc523081ad5" />
+  <Project Path="Sklad_project_app/Sklad_project_app.csproj" />
+</Solution>

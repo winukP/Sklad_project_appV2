@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtnAdd" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="BtnCancel" xml:space="preserve">
+    <value>ОТМЕНА</value>
+  </data>
+  <data name="BtnClose" xml:space="preserve">
+    <value>ЗАКРЫТЬ</value>
+  </data>
+  <data name="BtnDelete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="BtnEdit" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="BtnLogout" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="BtnRefresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="BtnReset" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="BtnSave" xml:space="preserve">
+    <value>СОХРАНИТЬ</value>
+  </data>
+  <data name="BtnView" xml:space="preserve">
+    <value>Просмотреть</value>
+  </data>
+  <data name="CatalogCompany" xml:space="preserve">
+    <value>ООО "Птички-тупички" - система управления складом</value>
+  </data>
+  <data name="CatalogTitle" xml:space="preserve">
+    <value>Каталог товаров</value>
+  </data>
+  <data name="ColArticle" xml:space="preserve">
+    <value>Артикул</value>
+  </data>
+  <data name="ColCategory" xml:space="preserve">
+    <value>Категория</value>
+  </data>
+  <data name="ColName" xml:space="preserve">
+    <value>Наименование товара</value>
+  </data>
+  <data name="ColPrice" xml:space="preserve">
+    <value>Цена закупки</value>
+  </data>
+  <data name="ColRest" xml:space="preserve">
+    <value>Остаток</value>
+  </data>
+  <data name="ColUnit" xml:space="preserve">
+    <value>Ед. измерения</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Все категории</value>
+  </data>
+  <data name="FilterAvailability" xml:space="preserve">
+    <value>Наличие:</value>
+  </data>
+  <data name="FilterAvailAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="FilterAvailIn" xml:space="preserve">
+    <value>В наличии</value>
+  </data>
+  <data name="FilterAvailOut" xml:space="preserve">
+    <value>Нет в наличии</value>
+  </data>
+  <data name="FilterCategory" xml:space="preserve">
+    <value>Категория:</value>
+  </data>
+  <data name="FilterPrice" xml:space="preserve">
+    <value>Цена:</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>Поиск (название / артикул):</value>
+  </data>
+  <data name="LblAdmin" xml:space="preserve">
+    <value>Администратор:</value>
+  </data>
+  <data name="LblFoundFormat" xml:space="preserve">
+    <value>Найдено:</value>
+  </data>
+  <data name="LblFoundOf" xml:space="preserve">
+    <value>из</value>
+  </data>
+  <data name="LblStorekeeper" xml:space="preserve">
+    <value>Кладовщик:</value>
+  </data>
+  <data name="LblTotalItems" xml:space="preserve">
+    <value>ВЗЯТО ТОВАРОВ:</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="LoginPassword" xml:space="preserve">
+    <value>Пароль:</value>
+  </data>
+  <data name="LoginRegister" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>ВХОД В СИСТЕМУ</value>
+  </data>
+  <data name="LoginUsername" xml:space="preserve">
+    <value>Имя пользователя:</value>
+  </data>
+  <data name="MsgCategoryExists" xml:space="preserve">
+    <value>Такая категория уже существует!</value>
+  </data>
+  <data name="MsgCategoryHasProducts" xml:space="preserve">
+    <value>Нельзя удалить категорию — в ней есть товары!</value>
+  </data>
+  <data name="MsgCatUnitNotFound" xml:space="preserve">
+    <value>Категория или единица измерения не найдены!</value>
+  </data>
+  <data name="MsgClientEmpty" xml:space="preserve">
+    <value>Введите название клиента!</value>
+  </data>
+  <data name="MsgConnectError" xml:space="preserve">
+    <value>Ошибка подключения:</value>
+  </data>
+  <data name="MsgConnectOk" xml:space="preserve">
+    <value>Подключение успешно!</value>
+  </data>
+  <data name="MsgDeleteConfirm" xml:space="preserve">
+    <value>Удалить выбранный товар?</value>
+  </data>
+  <data name="MsgDeleteTitle" xml:space="preserve">
+    <value>Подтверждение</value>
+  </data>
+  <data name="MsgFillFields" xml:space="preserve">
+    <value>Заполните все поля!</value>
+  </data>
+  <data name="MsgInputError" xml:space="preserve">
+    <value>Ошибка ввода</value>
+  </data>
+  <data name="MsgNegativePrice" xml:space="preserve">
+    <value>Цена не может быть отрицательной!</value>
+  </data>
+  <data name="MsgNoItems" xml:space="preserve">
+    <value>Выберите товары для отгрузки!</value>
+  </data>
+  <data name="MsgNotEnough" xml:space="preserve">
+    <value>Недостаточно товара на складе!</value>
+  </data>
+  <data name="MsgPriceError" xml:space="preserve">
+    <value>Введите корректную цену!</value>
+  </data>
+  <data name="MsgProductAdded" xml:space="preserve">
+    <value>Товар добавлен!</value>
+  </data>
+  <data name="MsgProductError" xml:space="preserve">
+    <value>Ошибка выбора товара!</value>
+  </data>
+  <data name="MsgProductUpdated" xml:space="preserve">
+    <value>Товар обновлён!</value>
+  </data>
+  <data name="MsgRegSuccess" xml:space="preserve">
+    <value>Регистрация успешна! Логин:</value>
+  </data>
+  <data name="MsgRestError" xml:space="preserve">
+    <value>Введите корректный остаток!</value>
+  </data>
+  <data name="MsgRoleNotFound" xml:space="preserve">
+    <value>Роль не найдена в базе данных!</value>
+  </data>
+  <data name="MsgSaveError" xml:space="preserve">
+    <value>Ошибка сохранения:</value>
+  </data>
+  <data name="MsgSelectDelete" xml:space="preserve">
+    <value>Выберите товар для удаления!</value>
+  </data>
+  <data name="MsgSelectEdit" xml:space="preserve">
+    <value>Выберите товар для редактирования!</value>
+  </data>
+  <data name="MsgSelectProduct" xml:space="preserve">
+    <value>Выберите товар!</value>
+  </data>
+  <data name="MsgSelectRole" xml:space="preserve">
+    <value>Выберите роль!</value>
+  </data>
+  <data name="MsgSelectView" xml:space="preserve">
+    <value>Выберите товар для просмотра!</value>
+  </data>
+  <data name="MsgShipSuccess" xml:space="preserve">
+    <value>Отгрузка успешно оформлена!</value>
+  </data>
+  <data name="MsgUserExists" xml:space="preserve">
+    <value>Пользователь с таким ФИО уже существует!</value>
+  </data>
+  <data name="MsgWrongLogin" xml:space="preserve">
+    <value>Неверный логин или пароль!</value>
+  </data>
+  <data name="PanelAdd" xml:space="preserve">
+    <value>ДОБАВЛЕНИЕ ТОВАРА</value>
+  </data>
+  <data name="PanelEdit" xml:space="preserve">
+    <value>РЕДАКТИРОВАНИЕ ТОВАРА</value>
+  </data>
+  <data name="PanelView" xml:space="preserve">
+    <value>ПРОСМОТР ТОВАРА</value>
+  </data>
+  <data name="RegisterAdmin" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="RegisterChoose" xml:space="preserve">
+    <value>Выберите нужное:</value>
+  </data>
+  <data name="RegisterFio" xml:space="preserve">
+    <value>Введите ФИО:</value>
+  </data>
+  <data name="RegisterPassword" xml:space="preserve">
+    <value>Введите пароль:</value>
+  </data>
+  <data name="RegisterStorekeeper" xml:space="preserve">
+    <value>Кладовщик</value>
+  </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>РЕГИСТРАЦИЯ В СИСТЕМЕ</value>
+  </data>
+</root>
