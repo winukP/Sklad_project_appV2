@@ -128,7 +128,7 @@ namespace Sklad_project_app
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnCategories);
             panelLeft.Controls.Add(btnHistory);
-            panelLeft.Location = new Point(209, 213);
+            panelLeft.Location = new Point(0, 35);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;

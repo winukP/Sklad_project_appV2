@@ -7,7 +7,7 @@ namespace Sklad_project_app
 {
     public partial class SuppliesForm : Form
     {
-        private PanelMode _currentMode = PanelMode.None;  
+        private PanelMode _currentMode = PanelMode.None;
         private Guid _selectedProductId = Guid.Empty;
 
         public SuppliesForm()
@@ -74,13 +74,31 @@ namespace Sklad_project_app
                     cmbCategory.Items.Add(category.Name);
                 }
                 cmbCategory.SelectedIndex = 0;
-            }
+                // ДАТЫ (как с категориями, но без Distinct)
+                var allSupplies = db.Supplies.ToList();  // загружаем все поставки
+                var uniqueDates = new List<DateTime>();
 
-            cmbAvailability.Items.Clear();
-            cmbAvailability.Items.Add(AppResources.FilterAvailAll);
-            cmbAvailability.Items.Add(AppResources.FilterAvailIn);
-            cmbAvailability.Items.Add(AppResources.FilterAvailOut);
-            cmbAvailability.SelectedIndex = 0;
+                foreach (var supply in allSupplies)
+                {
+                    DateTime dateOnly = supply.SuppliesDate.Date;
+                    if (!uniqueDates.Contains(dateOnly))
+                    {
+                        uniqueDates.Add(dateOnly);
+                    }
+                }
+
+                uniqueDates.Sort((a, b) => b.CompareTo(a));  // сортировка по убыванию
+
+                cmbDate.Items.Clear();
+                cmbDate.Items.Add("Все даты");
+
+                foreach (var date in uniqueDates)
+                {
+                    cmbDate.Items.Add(date.ToString("dd.MM.yyyy"));
+                }
+
+                cmbDate.SelectedIndex = 0;
+            }
         }
 
         private void LoadProducts()
@@ -138,8 +156,28 @@ namespace Sklad_project_app
                     }
                 }
 
-                // Обновляем надпись
-                lblFound.Text = $"Найдено: {afterCategory.Count} из {totalCount}";
+                // Фильтр по дате
+                var afterDate = new List<SuppliesItem>();
+
+                if (cmbDate.SelectedIndex <= 0)  // если выбран "Все даты" (индекс 0)
+                {
+                    afterDate = afterCategory;
+                }
+                else
+                {
+                    string selectedDateStr = cmbDate.SelectedItem.ToString();
+                    DateTime selectedDate = DateTime.ParseExact(selectedDateStr, "dd.MM.yyyy", null);
+
+                    foreach (var supply in afterCategory)
+                    {
+                        var supplyDate = supply.Supplies?.SuppliesDate.Date ?? DateTime.MinValue;
+
+                        if (supplyDate == selectedDate)
+                        {
+                            afterDate.Add(supply);
+                        }
+                    }
+                }
 
                 // Настройка таблицы
                 dgvProducts.Rows.Clear();
@@ -163,7 +201,7 @@ namespace Sklad_project_app
                 dgvProducts.Columns["colId"].Visible = false;
 
                 // Заполняем таблицу
-                foreach (var supply in afterCategory)
+                foreach (var supply in afterDate)
                 {
                     var productName = supply.Product?.Name ?? "—";
                     var categoryName = supply.Product?.Category?.Name ?? "—";
@@ -265,7 +303,7 @@ namespace Sklad_project_app
         {
             txtSearch.Text = "";
             cmbCategory.SelectedIndex = 0;
-            cmbAvailability.SelectedIndex = 0;
+            cmbDate.SelectedIndex = 0;
             txtPriceFrom.Text = "0";
             txtPriceTo.Text = "1000000";
             LoadProducts();
@@ -308,7 +346,7 @@ namespace Sklad_project_app
             LoadProducts();
         }
 
-        private void cmbAvailability_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbDate_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadProducts();
         }
@@ -454,7 +492,10 @@ namespace Sklad_project_app
 
         }
 
-        
+        private void cmbArtic_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

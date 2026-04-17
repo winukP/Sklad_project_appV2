@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
@@ -36,8 +36,8 @@
             txtSearch = new TextBox();
             lblCategory = new Label();
             cmbCategory = new ComboBox();
-            lblAvailability = new Label();
-            cmbAvailability = new ComboBox();
+            lblDate = new Label();
+            cmbDate = new ComboBox();
             lblPrice = new Label();
             txtPriceFrom = new TextBox();
             txtPriceTo = new TextBox();
@@ -281,8 +281,8 @@
             panelFilters.Controls.Add(txtSearch);
             panelFilters.Controls.Add(lblCategory);
             panelFilters.Controls.Add(cmbCategory);
-            panelFilters.Controls.Add(lblAvailability);
-            panelFilters.Controls.Add(cmbAvailability);
+            panelFilters.Controls.Add(lblDate);
+            panelFilters.Controls.Add(cmbDate);
             panelFilters.Controls.Add(lblPrice);
             panelFilters.Controls.Add(txtPriceFrom);
             panelFilters.Controls.Add(txtPriceTo);
@@ -330,24 +330,24 @@
             cmbCategory.TabIndex = 3;
             cmbCategory.SelectedIndexChanged += cmbCategory_SelectedIndexChanged;
             // 
-            // lblAvailability
+            // lblDate
             // 
-            lblAvailability.AutoSize = true;
-            lblAvailability.Font = new Font("Arial", 8F);
-            lblAvailability.Location = new Point(379, 8);
-            lblAvailability.Name = "lblAvailability";
-            lblAvailability.Size = new Size(67, 16);
-            lblAvailability.TabIndex = 4;
-            lblAvailability.Text = "Наличие:";
+            lblDate.AutoSize = true;
+            lblDate.Font = new Font("Arial", 8F);
+            lblDate.Location = new Point(379, 8);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(43, 16);
+            lblDate.TabIndex = 4;
+            lblDate.Text = "Дата:";
             // 
-            // cmbAvailability
+            // cmbDate
             // 
-            cmbAvailability.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbAvailability.Location = new Point(379, 25);
-            cmbAvailability.Name = "cmbAvailability";
-            cmbAvailability.Size = new Size(130, 28);
-            cmbAvailability.TabIndex = 5;
-            cmbAvailability.SelectedIndexChanged += cmbAvailability_SelectedIndexChanged;
+            cmbDate.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDate.Location = new Point(379, 25);
+            cmbDate.Name = "cmbDate";
+            cmbDate.Size = new Size(130, 28);
+            cmbDate.TabIndex = 5;
+            cmbDate.SelectedIndexChanged += cmbDate_SelectedIndexChanged;
             // 
             // lblPrice
             // 
@@ -402,24 +402,24 @@
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
-            dgvProducts.Location = new Point(140, 155);
+            dgvProducts.Location = new Point(140, 180);
             dgvProducts.MultiSelect = false;
             dgvProducts.Name = "dgvProducts";
             dgvProducts.ReadOnly = true;
             dgvProducts.RowHeadersVisible = false;
             dgvProducts.RowHeadersWidth = 51;
             dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProducts.Size = new Size(960, 445);
+            dgvProducts.Size = new Size(960, 420);
             dgvProducts.TabIndex = 5;
             // 
             // panelView
@@ -693,8 +693,8 @@
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.ComboBox cmbCategory;
-        private System.Windows.Forms.Label lblAvailability;
-        private System.Windows.Forms.ComboBox cmbAvailability;
+        private System.Windows.Forms.Label lblDate;
+        private System.Windows.Forms.ComboBox cmbDate;
         private System.Windows.Forms.Label lblPrice;
         private System.Windows.Forms.TextBox txtPriceFrom;
         private System.Windows.Forms.TextBox txtPriceTo;

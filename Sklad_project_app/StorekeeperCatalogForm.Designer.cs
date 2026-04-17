@@ -377,14 +377,14 @@
             dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
-            dgvProducts.Location = new Point(140, 155);
+            dgvProducts.Location = new Point(140, 180);
             dgvProducts.MultiSelect = false;
             dgvProducts.Name = "dgvProducts";
             dgvProducts.ReadOnly = true;
             dgvProducts.RowHeadersVisible = false;
             dgvProducts.RowHeadersWidth = 51;
             dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProducts.Size = new Size(960, 445);
+            dgvProducts.Size = new Size(960, 420);
             dgvProducts.TabIndex = 5;
             // 
             // panelView
