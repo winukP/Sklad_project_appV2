@@ -15,6 +15,8 @@ namespace Sklad_project_app
         public DbSet<Client> Clients { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<ShipmentItem> ShipmentItems { get; set; }
+        public DbSet<Supplies> Supplies { get; set; }
+        public DbSet<SuppliesItem> SuppliesItems { get; set; }
 
         public SkladContext() { }
 
@@ -125,6 +127,33 @@ namespace Sklad_project_app
                 .HasOne(item => item.Product)
                 .WithMany()
                 .HasForeignKey(item => item.ProductId);
+
+            //supplies
+            modelBuilder.Entity<Supplies>().ToTable("supplies");
+            modelBuilder.Entity<Supplies>().HasKey(s => s.Id);
+            modelBuilder.Entity<Supplies>().Property(s => s.Id).HasColumnName("id");
+            modelBuilder.Entity<Supplies>().Property(s => s.SuppliesDate).HasColumnName("supply_date");
+            modelBuilder.Entity<Supplies>().Property(s => s.UserId).HasColumnName("user_id");
+            modelBuilder.Entity<Supplies>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId);
+            //supplies_items
+            modelBuilder.Entity<SuppliesItem>().ToTable("supplies_items");
+            modelBuilder.Entity<SuppliesItem>().HasKey(item => item.Id);
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.Id).HasColumnName("id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.SuppliesId).HasColumnName("supplies_id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.ProductId).HasColumnName("product_id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.PurchasePrice).HasColumnName("purchase_price");
+            modelBuilder.Entity<SuppliesItem>()
+                .HasOne(i => i.Supplies)
+                .WithMany(s => s.SuppliesItems)
+                .HasForeignKey(i => i.SuppliesId);
+            modelBuilder.Entity<SuppliesItem>()
+                .HasOne(i => i.Product)
+                .WithMany()
+                .HasForeignKey(i => i.ProductId);
 
             base.OnModelCreating(modelBuilder);
         }

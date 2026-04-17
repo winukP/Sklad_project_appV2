@@ -1,6 +1,6 @@
 ﻿namespace Sklad_project_app
 {
-    partial class StorekeeperCatalogForm
+    partial class SuppliesForm
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -27,6 +27,8 @@
             btnShipment = new Button();
             btnMyShipments = new Button();
             panelActions = new Panel();
+            btnImport = new Button();
+            btnAddComing = new Button();
             btnView = new Button();
             btnRefresh = new Button();
             panelFilters = new Panel();
@@ -43,15 +45,20 @@
             btnReset = new Button();
             dgvProducts = new DataGridView();
             panelView = new Panel();
-            lblPanelTitle = new Label();
-            lblArticleView = new Label();
+            cmbArtic = new ComboBox();
+            cmbCateg = new ComboBox();
+            lblArticleEdit = new Label();
+            cmbProduct = new ComboBox();
             txtArticleView = new TextBox();
+            btnSave = new Button();
+            dtpDate = new DateTimePicker();
+            lblPanelTitle = new Label();
             lblNameView = new Label();
             txtNameView = new TextBox();
             lblCategoryView = new Label();
             txtCategoryView = new TextBox();
             lblUnitView = new Label();
-            txtUnitView = new TextBox();
+            txtDateView = new TextBox();
             lblPriceView = new Label();
             txtPriceView = new TextBox();
             lblRestView = new Label();
@@ -179,7 +186,7 @@
             btnCatalog.Name = "btnCatalog";
             btnCatalog.Size = new Size(128, 30);
             btnCatalog.TabIndex = 0;
-            btnCatalog.Text = "Каталог товаров";
+            btnCatalog.Text = "Каталог";
             btnCatalog.UseVisualStyleBackColor = false;
             btnCatalog.Click += btnCatalog_Click;
             // 
@@ -206,6 +213,8 @@
             // panelActions
             // 
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
+            panelActions.Controls.Add(btnImport);
+            panelActions.Controls.Add(btnAddComing);
             panelActions.Controls.Add(btnView);
             panelActions.Controls.Add(btnRefresh);
             panelActions.Location = new Point(140, 35);
@@ -213,12 +222,38 @@
             panelActions.Size = new Size(960, 45);
             panelActions.TabIndex = 2;
             // 
+            // btnImport
+            // 
+            btnImport.BackColor = Color.FromArgb(70, 70, 70);
+            btnImport.FlatStyle = FlatStyle.Flat;
+            btnImport.ForeColor = Color.White;
+            btnImport.Location = new Point(137, 8);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(121, 28);
+            btnImport.TabIndex = 3;
+            btnImport.Text = "Импорт";
+            btnImport.UseVisualStyleBackColor = false;
+            btnImport.Click += btnImport_Click;
+            // 
+            // btnAddComing
+            // 
+            btnAddComing.BackColor = Color.FromArgb(70, 70, 70);
+            btnAddComing.FlatStyle = FlatStyle.Flat;
+            btnAddComing.ForeColor = Color.White;
+            btnAddComing.Location = new Point(10, 8);
+            btnAddComing.Name = "btnAddComing";
+            btnAddComing.Size = new Size(121, 28);
+            btnAddComing.TabIndex = 2;
+            btnAddComing.Text = "Добавить ";
+            btnAddComing.UseVisualStyleBackColor = false;
+            btnAddComing.Click += btnAddComing_Click;
+            // 
             // btnView
             // 
             btnView.BackColor = Color.FromArgb(70, 70, 70);
             btnView.FlatStyle = FlatStyle.Flat;
             btnView.ForeColor = Color.White;
-            btnView.Location = new Point(10, 8);
+            btnView.Location = new Point(264, 8);
             btnView.Name = "btnView";
             btnView.Size = new Size(121, 28);
             btnView.TabIndex = 0;
@@ -231,7 +266,7 @@
             btnRefresh.BackColor = Color.FromArgb(70, 70, 70);
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(137, 8);
+            btnRefresh.Location = new Point(391, 8);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(121, 28);
             btnRefresh.TabIndex = 1;
@@ -390,15 +425,20 @@
             // panelView
             // 
             panelView.BackColor = Color.FromArgb(50, 50, 50);
-            panelView.Controls.Add(lblPanelTitle);
-            panelView.Controls.Add(lblArticleView);
+            panelView.Controls.Add(cmbArtic);
+            panelView.Controls.Add(cmbCateg);
+            panelView.Controls.Add(lblArticleEdit);
+            panelView.Controls.Add(cmbProduct);
             panelView.Controls.Add(txtArticleView);
+            panelView.Controls.Add(btnSave);
+            panelView.Controls.Add(dtpDate);
+            panelView.Controls.Add(lblPanelTitle);
             panelView.Controls.Add(lblNameView);
             panelView.Controls.Add(txtNameView);
             panelView.Controls.Add(lblCategoryView);
             panelView.Controls.Add(txtCategoryView);
             panelView.Controls.Add(lblUnitView);
-            panelView.Controls.Add(txtUnitView);
+            panelView.Controls.Add(txtDateView);
             panelView.Controls.Add(lblPriceView);
             panelView.Controls.Add(txtPriceView);
             panelView.Controls.Add(lblRestView);
@@ -410,6 +450,72 @@
             panelView.TabIndex = 4;
             panelView.Visible = false;
             // 
+            // cmbArtic
+            // 
+            cmbArtic.FormattingEnabled = true;
+            cmbArtic.Location = new Point(5, 58);
+            cmbArtic.Name = "cmbArtic";
+            cmbArtic.Size = new Size(130, 28);
+            cmbArtic.TabIndex = 16;
+            // 
+            // cmbCateg
+            // 
+            cmbCateg.FormattingEnabled = true;
+            cmbCateg.Location = new Point(5, 147);
+            cmbCateg.Name = "cmbCateg";
+            cmbCateg.Size = new Size(130, 28);
+            cmbCateg.TabIndex = 15;
+            // 
+            // lblArticleEdit
+            // 
+            lblArticleEdit.AutoSize = true;
+            lblArticleEdit.Font = new Font("Arial", 8F);
+            lblArticleEdit.ForeColor = Color.White;
+            lblArticleEdit.Location = new Point(5, 42);
+            lblArticleEdit.Name = "lblArticleEdit";
+            lblArticleEdit.Size = new Size(64, 16);
+            lblArticleEdit.TabIndex = 7;
+            lblArticleEdit.Text = "Артикул:";
+            // 
+            // cmbProduct
+            // 
+            cmbProduct.FormattingEnabled = true;
+            cmbProduct.Location = new Point(5, 102);
+            cmbProduct.Name = "cmbProduct";
+            cmbProduct.Size = new Size(130, 28);
+            cmbProduct.TabIndex = 6;
+            // 
+            // txtArticleView
+            // 
+            txtArticleView.BackColor = Color.FromArgb(80, 80, 80);
+            txtArticleView.BorderStyle = BorderStyle.FixedSingle;
+            txtArticleView.ForeColor = Color.White;
+            txtArticleView.Location = new Point(5, 58);
+            txtArticleView.Name = "txtArticleView";
+            txtArticleView.Size = new Size(130, 27);
+            txtArticleView.TabIndex = 6;
+            // 
+            // btnSave
+            // 
+            btnSave.BackColor = Color.FromArgb(80, 80, 80);
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(5, 351);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(130, 28);
+            btnSave.TabIndex = 14;
+            btnSave.Text = "СОХРАНИТЬ";
+            btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
+            // 
+            // dtpDate
+            // 
+            dtpDate.Format = DateTimePickerFormat.Short;
+            dtpDate.Location = new Point(5, 190);
+            dtpDate.Name = "dtpDate";
+            dtpDate.Size = new Size(130, 27);
+            dtpDate.TabIndex = 6;
+            // 
             // lblPanelTitle
             // 
             lblPanelTitle.Font = new Font("Arial", 8F, FontStyle.Bold);
@@ -420,28 +526,6 @@
             lblPanelTitle.TabIndex = 0;
             lblPanelTitle.Text = "ПРОСМОТР ТОВАРА";
             lblPanelTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblArticleView
-            // 
-            lblArticleView.AutoSize = true;
-            lblArticleView.Font = new Font("Arial", 8F);
-            lblArticleView.ForeColor = Color.White;
-            lblArticleView.Location = new Point(5, 42);
-            lblArticleView.Name = "lblArticleView";
-            lblArticleView.Size = new Size(64, 16);
-            lblArticleView.TabIndex = 1;
-            lblArticleView.Text = "Артикул:";
-            // 
-            // txtArticleView
-            // 
-            txtArticleView.BackColor = Color.FromArgb(80, 80, 80);
-            txtArticleView.BorderStyle = BorderStyle.FixedSingle;
-            txtArticleView.ForeColor = Color.White;
-            txtArticleView.Location = new Point(5, 58);
-            txtArticleView.Name = "txtArticleView";
-            txtArticleView.ReadOnly = true;
-            txtArticleView.Size = new Size(130, 27);
-            txtArticleView.TabIndex = 2;
             // 
             // lblNameView
             // 
@@ -470,7 +554,7 @@
             lblCategoryView.AutoSize = true;
             lblCategoryView.Font = new Font("Arial", 8F);
             lblCategoryView.ForeColor = Color.White;
-            lblCategoryView.Location = new Point(5, 130);
+            lblCategoryView.Location = new Point(4, 131);
             lblCategoryView.Name = "lblCategoryView";
             lblCategoryView.Size = new Size(79, 16);
             lblCategoryView.TabIndex = 5;
@@ -481,7 +565,7 @@
             txtCategoryView.BackColor = Color.FromArgb(80, 80, 80);
             txtCategoryView.BorderStyle = BorderStyle.FixedSingle;
             txtCategoryView.ForeColor = Color.White;
-            txtCategoryView.Location = new Point(5, 146);
+            txtCategoryView.Location = new Point(5, 147);
             txtCategoryView.Name = "txtCategoryView";
             txtCategoryView.ReadOnly = true;
             txtCategoryView.Size = new Size(130, 27);
@@ -494,20 +578,21 @@
             lblUnitView.ForeColor = Color.White;
             lblUnitView.Location = new Point(5, 174);
             lblUnitView.Name = "lblUnitView";
-            lblUnitView.Size = new Size(108, 16);
+            lblUnitView.Size = new Size(106, 16);
             lblUnitView.TabIndex = 7;
-            lblUnitView.Text = "Ед. измерения:";
+            lblUnitView.Text = "Дата поставки:";
             // 
-            // txtUnitView
+            // txtDateView
             // 
-            txtUnitView.BackColor = Color.FromArgb(80, 80, 80);
-            txtUnitView.BorderStyle = BorderStyle.FixedSingle;
-            txtUnitView.ForeColor = Color.White;
-            txtUnitView.Location = new Point(5, 190);
-            txtUnitView.Name = "txtUnitView";
-            txtUnitView.ReadOnly = true;
-            txtUnitView.Size = new Size(130, 27);
-            txtUnitView.TabIndex = 8;
+            txtDateView.BackColor = Color.FromArgb(80, 80, 80);
+            txtDateView.BorderStyle = BorderStyle.FixedSingle;
+            txtDateView.ForeColor = Color.White;
+            txtDateView.Location = new Point(5, 190);
+            txtDateView.Name = "txtDateView";
+            txtDateView.ReadOnly = true;
+            txtDateView.Size = new Size(130, 27);
+            txtDateView.TabIndex = 8;
+            txtDateView.TextChanged += txtUnitView_TextChanged;
             // 
             // lblPriceView
             // 
@@ -525,7 +610,7 @@
             txtPriceView.BackColor = Color.FromArgb(80, 80, 80);
             txtPriceView.BorderStyle = BorderStyle.FixedSingle;
             txtPriceView.ForeColor = Color.White;
-            txtPriceView.Location = new Point(5, 234);
+            txtPriceView.Location = new Point(4, 234);
             txtPriceView.Name = "txtPriceView";
             txtPriceView.ReadOnly = true;
             txtPriceView.Size = new Size(130, 27);
@@ -536,11 +621,11 @@
             lblRestView.AutoSize = true;
             lblRestView.Font = new Font("Arial", 8F);
             lblRestView.ForeColor = Color.White;
-            lblRestView.Location = new Point(5, 262);
+            lblRestView.Location = new Point(4, 262);
             lblRestView.Name = "lblRestView";
-            lblRestView.Size = new Size(65, 16);
+            lblRestView.Size = new Size(87, 16);
             lblRestView.TabIndex = 11;
-            lblRestView.Text = "Остаток:";
+            lblRestView.Text = "Количество:";
             // 
             // txtRestView
             // 
@@ -566,7 +651,7 @@
             btnCloseView.UseVisualStyleBackColor = false;
             btnCloseView.Click += btnCloseView_Click;
             // 
-            // StorekeeperCatalogForm
+            // SuppliesForm
             // 
             BackColor = Color.White;
             ClientSize = new Size(1100, 600);
@@ -576,10 +661,10 @@
             Controls.Add(panelFilters);
             Controls.Add(panelView);
             Controls.Add(dgvProducts);
-            Name = "StorekeeperCatalogForm";
+            Name = "SuppliesForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Каталог товаров - Кладовщик";
-            Load += StorekeeperCatalogForm_Load;
+            Text = "Поставки";
+            Load += SuppliesCatalogForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelLeft.ResumeLayout(false);
@@ -618,14 +703,11 @@
         private System.Windows.Forms.DataGridView dgvProducts;
         private System.Windows.Forms.Panel panelView;
         private System.Windows.Forms.Label lblPanelTitle;
-        private System.Windows.Forms.Label lblArticleView;
-        private System.Windows.Forms.TextBox txtArticleView;
         private System.Windows.Forms.Label lblNameView;
         private System.Windows.Forms.TextBox txtNameView;
         private System.Windows.Forms.Label lblCategoryView;
         private System.Windows.Forms.TextBox txtCategoryView;
         private System.Windows.Forms.Label lblUnitView;
-        private System.Windows.Forms.TextBox txtUnitView;
         private System.Windows.Forms.Label lblPriceView;
         private System.Windows.Forms.TextBox txtPriceView;
         private System.Windows.Forms.Label lblRestView;
@@ -635,5 +717,15 @@
         private Button btnReports;
         private Button btnExpirationDates;
         private Button btnSettings;
+        private Button btnImport;
+        private Button btnAddComing;
+        private DateTimePicker dtpDate;
+        private TextBox txtDateView;
+        private Button btnSave;
+        private ComboBox cmbProduct;
+        private TextBox txtArticleView;
+        private Label lblArticleEdit;
+        private ComboBox cmbArtic;
+        private ComboBox cmbCateg;
     }
 }

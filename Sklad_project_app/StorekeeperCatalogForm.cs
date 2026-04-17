@@ -350,5 +350,27 @@ namespace Sklad_project_app
         {
             LoadProducts();
         }
+
+        private void btnSuplies_Click(object sender, EventArgs e)
+        {
+            var suppliesForm = new SuppliesForm();
+            suppliesForm.ShowDialog();
+            LoadProducts();
+        }
+
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnExpirationDates_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -398,5 +398,6 @@ namespace Sklad_project_app
         {
             LoadProducts();
         }
+
     }
 }
