@@ -16,6 +16,31 @@ namespace Sklad_project_app
             lblUserInfo.Text = AppResources.LblAdmin
                 + CurrentUser.User.Surname + " " + CurrentUser.User.Name;
         }
+        private string GenerateArticle()
+        {
+            using (var db = new SkladContext())
+            {
+                var products = db.Products.ToList();
+
+                var maxArticle = products
+                    .Where(p => p.Article != null && p.Article.All(char.IsDigit))
+                    .Select(p => p.Article)
+                    .OrderByDescending(a => a)
+                    .FirstOrDefault();
+
+                if (string.IsNullOrEmpty(maxArticle))
+                {
+                    return "000001";
+                }
+
+                if (int.TryParse(maxArticle, out int number))
+                {
+                    number++;
+                    return number.ToString("D6");
+                }
+            }
+            return "000001";
+        }
 
         private void AdminCatalogForm_Load(object sender, EventArgs e)
         {
@@ -217,6 +242,10 @@ namespace Sklad_project_app
             ClearEditPanel();
             LoadCategoriesToEditPanel();
             LoadUnitsToCmbUnit();
+            txtArticleEdit.Text = GenerateArticle();
+            txtRestEdit.Text = "0";
+            txtRestEdit.ReadOnly = true;
+            txtArticleEdit.ReadOnly = true;
             lblPanelTitle.Text = AppResources.PanelAdd;
             panelEdit.Visible = true;
             panelEdit.BringToFront();
@@ -456,7 +485,6 @@ namespace Sklad_project_app
 
         private void ClearEditPanel()
         {
-            txtArticleEdit.Text = null;
             txtNameEdit.Text = null;
 
             if (cmbCategoryEdit.Items.Count > 0)

@@ -338,10 +338,10 @@ namespace Sklad_project_app
         {
             _currentMode = PanelMode.Add;
             txtNameView.ReadOnly = false;
-            txtCategoryView.ReadOnly = false;
             txtDateView.ReadOnly = false;
             txtPriceView.ReadOnly = false;
             txtRestView.ReadOnly = false;
+            txtArticleView.ReadOnly = true;
             dtpDate.Visible = true;
             btnSave.Visible = true;
             cmbProduct.Visible = true;

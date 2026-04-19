@@ -127,7 +127,7 @@
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnShipment);
             panelLeft.Controls.Add(btnMyShipments);
-            panelLeft.Location = new Point(237, 241);
+            panelLeft.Location = new Point(0, 35);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
