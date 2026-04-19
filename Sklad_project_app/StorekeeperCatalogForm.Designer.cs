@@ -353,7 +353,7 @@
             // btnReset
             // 
             btnReset.FlatStyle = FlatStyle.Flat;
-            btnReset.Location = new Point(138, 61);
+            btnReset.Location = new Point(148, 61);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(88, 33);
             btnReset.TabIndex = 10;

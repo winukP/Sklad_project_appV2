@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
@@ -45,8 +45,6 @@
             btnReset = new Button();
             dgvProducts = new DataGridView();
             panelView = new Panel();
-            cmbArtic = new ComboBox();
-            cmbCateg = new ComboBox();
             lblArticleEdit = new Label();
             cmbProduct = new ComboBox();
             txtArticleView = new TextBox();
@@ -129,7 +127,7 @@
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnShipment);
             panelLeft.Controls.Add(btnMyShipments);
-            panelLeft.Location = new Point(0, 35);
+            panelLeft.Location = new Point(237, 241);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
@@ -388,7 +386,7 @@
             // btnReset
             // 
             btnReset.FlatStyle = FlatStyle.Flat;
-            btnReset.Location = new Point(138, 61);
+            btnReset.Location = new Point(149, 61);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(88, 33);
             btnReset.TabIndex = 10;
@@ -402,14 +400,14 @@
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
             dgvProducts.Location = new Point(140, 180);
@@ -425,8 +423,6 @@
             // panelView
             // 
             panelView.BackColor = Color.FromArgb(50, 50, 50);
-            panelView.Controls.Add(cmbArtic);
-            panelView.Controls.Add(cmbCateg);
             panelView.Controls.Add(lblArticleEdit);
             panelView.Controls.Add(cmbProduct);
             panelView.Controls.Add(txtArticleView);
@@ -450,22 +446,6 @@
             panelView.TabIndex = 4;
             panelView.Visible = false;
             // 
-            // cmbArtic
-            // 
-            cmbArtic.FormattingEnabled = true;
-            cmbArtic.Location = new Point(5, 58);
-            cmbArtic.Name = "cmbArtic";
-            cmbArtic.Size = new Size(130, 28);
-            cmbArtic.TabIndex = 16;
-            // 
-            // cmbCateg
-            // 
-            cmbCateg.FormattingEnabled = true;
-            cmbCateg.Location = new Point(5, 147);
-            cmbCateg.Name = "cmbCateg";
-            cmbCateg.Size = new Size(130, 28);
-            cmbCateg.TabIndex = 15;
-            // 
             // lblArticleEdit
             // 
             lblArticleEdit.AutoSize = true;
@@ -484,6 +464,7 @@
             cmbProduct.Name = "cmbProduct";
             cmbProduct.Size = new Size(130, 28);
             cmbProduct.TabIndex = 6;
+            cmbProduct.SelectedIndexChanged += cmbProduct_SelectedIndexChanged;
             // 
             // txtArticleView
             // 
@@ -592,7 +573,6 @@
             txtDateView.ReadOnly = true;
             txtDateView.Size = new Size(130, 27);
             txtDateView.TabIndex = 8;
-            txtDateView.TextChanged += txtUnitView_TextChanged;
             // 
             // lblPriceView
             // 
@@ -725,7 +705,5 @@
         private ComboBox cmbProduct;
         private TextBox txtArticleView;
         private Label lblArticleEdit;
-        private ComboBox cmbArtic;
-        private ComboBox cmbCateg;
     }
 }

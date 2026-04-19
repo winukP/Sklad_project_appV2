@@ -14,8 +14,6 @@ namespace Sklad_project_app
         {
             InitializeComponent();
             LoadProductsToComboBox();
-            LoadArticlesToComboBox();
-            LoadCategoriesToComboBox();
             LoadProducts();
             this.Text = AppResources.CatalogTitle;
             lblUserInfo.Text = AppResources.LblStorekeeper
@@ -25,34 +23,13 @@ namespace Sklad_project_app
         {
             using (var db = new SkladContext())
             {
-                var products = db.Products.ToList();
+                var products = db.Products
+                .Include(p => p.Category)
+                .ToList();
                 cmbProduct.DisplayMember = "Name";
                 cmbProduct.ValueMember = "Id";
                 cmbProduct.DataSource = products;
-            }
-        }
-        private void LoadArticlesToComboBox()
-        {
-            using (var db = new SkladContext())
-            {
-                var products = db.Products
-                    .Include(p => p.Category)
-                    .ToList();
-
-                cmbArtic.DisplayMember = "Article";
-                cmbArtic.ValueMember = "Id";
-                cmbArtic.DataSource = products;
-            }
-        }
-        private void LoadCategoriesToComboBox()
-        {
-            using (var db = new SkladContext())
-            {
-                var categories = db.Categories.ToList();
-
-                cmbCateg.DisplayMember = "Name";
-                cmbCateg.ValueMember = "Id";
-                cmbCateg.DataSource = categories;
+                cmbProduct.SelectedIndex = -1;
             }
         }
         private void SuppliesCatalogForm_Load(object sender, EventArgs e)
@@ -74,8 +51,8 @@ namespace Sklad_project_app
                     cmbCategory.Items.Add(category.Name);
                 }
                 cmbCategory.SelectedIndex = 0;
-                // ДАТЫ (как с категориями, но без Distinct)
-                var allSupplies = db.Supplies.ToList();  // загружаем все поставки
+
+                var allSupplies = db.Supplies.ToList();
                 var uniqueDates = new List<DateTime>();
 
                 foreach (var supply in allSupplies)
@@ -87,7 +64,7 @@ namespace Sklad_project_app
                     }
                 }
 
-                uniqueDates.Sort((a, b) => b.CompareTo(a));  // сортировка по убыванию
+                uniqueDates.Sort((a, b) => b.CompareTo(a));
 
                 cmbDate.Items.Clear();
                 cmbDate.Items.Add("Все даты");
@@ -103,21 +80,18 @@ namespace Sklad_project_app
 
         private void LoadProducts()
         {
-            // Загружаем поставки (SupplyItems)
             using (var db = new SkladContext())
             {
-                var allSupplies = db.SuppliesItems  // ← Исправь: SuppliesItems → SupplyItems
+                var allSupplies = db.SuppliesItems
                     .Include(s => s.Product)
                     .ThenInclude(p => p.Category)
                     .Include(s => s.Product)
-                    .Include(s => s.Supplies)  // ← Исправь: Supplies → Supply
+                    .Include(s => s.Supplies)
                     .ToList();
 
                 int totalCount = allSupplies.Count;
-
-                // Поиск по тексту
                 var searchText = txtSearch.Text.Trim().ToLower();
-                var afterSearch = new List<SuppliesItem>();  // ← Исправь: SuppliesItem → SupplyItem
+                var afterSearch = new List<SuppliesItem>();
 
                 if (string.IsNullOrEmpty(searchText))
                 {
@@ -137,8 +111,7 @@ namespace Sklad_project_app
                     }
                 }
 
-                // Фильтр по категории
-                var afterCategory = new List<SuppliesItem>();  // ← Исправь
+                var afterCategory = new List<SuppliesItem>();
 
                 if (cmbCategory.SelectedIndex <= 0)
                 {
@@ -156,10 +129,9 @@ namespace Sklad_project_app
                     }
                 }
 
-                // Фильтр по дате
                 var afterDate = new List<SuppliesItem>();
 
-                if (cmbDate.SelectedIndex <= 0)  // если выбран "Все даты" (индекс 0)
+                if (cmbDate.SelectedIndex <= 0)
                 {
                     afterDate = afterCategory;
                 }
@@ -179,11 +151,11 @@ namespace Sklad_project_app
                     }
                 }
 
-                // Настройка таблицы
+                lblFound.Text = $"Найдено: {afterDate.Count} из {totalCount}";
+
                 dgvProducts.Rows.Clear();
                 dgvProducts.Columns.Clear();
 
-                // Колонки для отображения поставок
                 dgvProducts.Columns.Add("colArticle", "Артикул");
                 dgvProducts.Columns.Add("colProductName", "Товар");
                 dgvProducts.Columns.Add("colCategory", "Категория");
@@ -195,19 +167,15 @@ namespace Sklad_project_app
                 dgvProducts.Columns.Add("colId", "ID");
                 dgvProducts.Columns["colId"].Visible = false;
 
-                // Скрываем ID колонки
                 dgvProducts.Columns["colSupplyId"].Visible = false;
                 dgvProducts.Columns["colProductId"].Visible = false;
                 dgvProducts.Columns["colId"].Visible = false;
 
-                // Заполняем таблицу
                 foreach (var supply in afterDate)
                 {
                     var productName = supply.Product?.Name ?? "—";
                     var categoryName = supply.Product?.Category?.Name ?? "—";
                     var article = supply.Product?.Article ?? "—";
-
-                    // БЕРЁМ ДАТУ ИЗ ШАПКИ (Supplies)
                     var supplyDate = supply.Supplies?.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
 
                     dgvProducts.Rows.Add(
@@ -222,7 +190,7 @@ namespace Sklad_project_app
                         supply.Id
                     );
                 }
-            } // ← ВСЕ ОПЕРАЦИИ ВНУТРИ using
+            }
         }
 
 
@@ -235,8 +203,6 @@ namespace Sklad_project_app
             }
 
             var selectedRow = dgvProducts.SelectedRows[0];
-
-            // Проверка - какие колонки есть в таблице
             string article = "";
             string productName = "";
             string category = "";
@@ -259,10 +225,9 @@ namespace Sklad_project_app
             if (dgvProducts.Columns.Contains("colQuantity"))
                 quantity = selectedRow.Cells["colQuantity"].Value?.ToString();
 
-            if (dgvProducts.Columns.Contains("colDate"))  // ← ДОБАВИТЬ
+            if (dgvProducts.Columns.Contains("colDate"))
                 date = selectedRow.Cells["colDate"].Value?.ToString();
 
-            // Заполняем поля (используй свои имена TextBox)
             txtArticleView.Text = article;
             txtNameView.Text = productName;
             txtCategoryView.Text = category;
@@ -270,23 +235,21 @@ namespace Sklad_project_app
             txtRestView.Text = quantity;
             txtDateView.Text = date;
 
-            // Делаем поля только для чтения
             txtArticleView.ReadOnly = true;
             txtNameView.ReadOnly = true;
             txtCategoryView.ReadOnly = true;
             txtPriceView.ReadOnly = true;
             txtRestView.ReadOnly = true;
 
-            // Скрываем ненужное
             btnSave.Visible = false;
             dtpDate.Visible = false;
             cmbProduct.Visible = false;
-            cmbArtic.Visible = false;
-            cmbCateg.Visible = false;
 
-            lblPanelTitle.Text = "ПРОСМОТР ПОСТАВКИ";
+            lblPanelTitle.Text = "Просмотр";
             panelView.Visible = true;
             panelView.BringToFront();
+
+            cmbProduct.SelectedIndex = -1;
         }
 
         private void btnCloseView_Click(object sender, EventArgs e)
@@ -374,7 +337,6 @@ namespace Sklad_project_app
         private void btnAddComing_Click(object sender, EventArgs e)
         {
             _currentMode = PanelMode.Add;
-            txtArticleView.Visible = false;
             txtNameView.ReadOnly = false;
             txtCategoryView.ReadOnly = false;
             txtDateView.ReadOnly = false;
@@ -383,17 +345,19 @@ namespace Sklad_project_app
             dtpDate.Visible = true;
             btnSave.Visible = true;
             cmbProduct.Visible = true;
-            cmbArtic.Visible = true;
-            cmbCateg.Visible = true;
+        
             panelView.Visible = true;
             panelView.BringToFront();
-            lblPanelTitle.Text = "Добавление прихода";
+            lblPanelTitle.Text = "Добавление";
             txtArticleView.Text = "";
             txtNameView.Text = "";
             txtCategoryView.Text = "";
             txtDateView.Text = "";
             txtPriceView.Text = "";
             txtRestView.Text = "";
+
+            cmbProduct.SelectedIndex = -1;
+   
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -420,13 +384,13 @@ namespace Sklad_project_app
 
             using (var db = new SkladContext())
             {
-                if (cmbArtic.SelectedItem == null)
+                if (cmbProduct.SelectedItem == null)
                 {
                     MessageBox.Show("Выберите товар");
                     return;
                 }
 
-                var selectedProduct = (Product)cmbArtic.SelectedItem;
+                var selectedProduct = (Product)cmbProduct.SelectedItem;
                 var product = db.Products.Find(selectedProduct.Id);
 
                 if (product == null)
@@ -435,7 +399,6 @@ namespace Sklad_project_app
                     return;
                 }
 
-                // 1. СОЗДАЁМ ШАПКУ
                 var supply = new Supplies
                 {
                     Id = Guid.NewGuid(),
@@ -443,20 +406,18 @@ namespace Sklad_project_app
                     UserId = CurrentUser.User.Id,
                 };
                 db.Supplies.Add(supply);
-                db.SaveChanges();  // ← сохраняем шапку
+                db.SaveChanges();
 
-                // 2. СОЗДАЁМ ДЕТАЛЬ
                 var supplyItem = new SuppliesItem
                 {
                     Id = Guid.NewGuid(),
-                    SuppliesId = supply.Id,  // ← ссылка на шапку
+                    SuppliesId = supply.Id,
                     ProductId = product.Id,
                     Quantity = quantity,
                     PurchasePrice = price,
                 };
                 db.SuppliesItems.Add(supplyItem);
 
-                // 3. ОБНОВЛЯЕМ ОСТАТОК
                 var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
                 if (stock != null)
                 {
@@ -476,7 +437,6 @@ namespace Sklad_project_app
 
                 db.SaveChanges();
             }
-            // Очищаем поля
             txtArticleView.Text = "";
             txtNameView.Text = "";
             txtPriceView.Text = "";
@@ -487,15 +447,25 @@ namespace Sklad_project_app
             MessageBox.Show("Поставка сохранена!");
         }
 
-        private void txtUnitView_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void cmbArtic_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            
         }
+
+        private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(cmbProduct.SelectedIndex == -1) return;
+
+            var product = (Product)cmbProduct.SelectedItem;
+            txtNameView.Text = product.Name;
+            txtCategoryView.Text = product.Category?.Name ?? "";
+            txtArticleView.Text = product.Article;
+        }
+
+        private void cmbCateg_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }  
     }
 
 }

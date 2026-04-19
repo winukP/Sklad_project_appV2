@@ -336,12 +336,16 @@ namespace Sklad_project_app
 
                 foreach (var item in itemsToShip)
                 {
+                    var stock = db.Stocks.FirstOrDefault(s => s.ProductId == item.Key);
+                    decimal price = stock?.PurchasePrice ?? 0;
+                    decimal amount = price * item.Value;
                     db.ShipmentItems.Add(new ShipmentItem
                     {
                         Id = Guid.NewGuid(),
                         ShipmentId = newShipment.Id,
                         ProductId = item.Key,
-                        Quantity = item.Value
+                        Quantity = item.Value,
+                        Amount = amount
                     });
 
                     var foundStock = db.Stocks

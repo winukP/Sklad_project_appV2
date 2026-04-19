@@ -402,7 +402,7 @@ namespace Sklad_project_app
             // btnReset
             // 
             btnReset.FlatStyle = FlatStyle.Flat;
-            btnReset.Location = new Point(137, 69);
+            btnReset.Location = new Point(147, 69);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(92, 29);
             btnReset.TabIndex = 10;

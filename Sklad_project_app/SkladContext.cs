@@ -119,6 +119,7 @@ namespace Sklad_project_app
             modelBuilder.Entity<ShipmentItem>().Property(item => item.ShipmentId).HasColumnName("shipment_id");
             modelBuilder.Entity<ShipmentItem>().Property(item => item.ProductId).HasColumnName("product_id");
             modelBuilder.Entity<ShipmentItem>().Property(item => item.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<ShipmentItem>().Property(item => item.Amount).HasColumnName("amount");
             modelBuilder.Entity<ShipmentItem>()
                 .HasOne(item => item.Shipment)
                 .WithMany(shipment => shipment.ShipmentItems)

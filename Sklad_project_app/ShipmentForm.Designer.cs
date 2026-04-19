@@ -316,7 +316,7 @@ namespace Sklad_project_app
             // btnReset
             // 
             btnReset.FlatStyle = FlatStyle.Flat;
-            btnReset.Location = new Point(137, 63);
+            btnReset.Location = new Point(147, 63);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(85, 31);
             btnReset.TabIndex = 7;
@@ -340,13 +340,13 @@ namespace Sklad_project_app
             dgvShipment.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvShipment.ColumnHeadersHeight = 29;
             dgvShipment.EnableHeadersVisualStyles = false;
-            dgvShipment.Location = new Point(140, 155);
+            dgvShipment.Location = new Point(140, 180);
             dgvShipment.MultiSelect = false;
             dgvShipment.Name = "dgvShipment";
             dgvShipment.RowHeadersVisible = false;
             dgvShipment.RowHeadersWidth = 51;
             dgvShipment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvShipment.Size = new Size(960, 445);
+            dgvShipment.Size = new Size(960, 420);
             dgvShipment.TabIndex = 4;
             dgvShipment.CellClick += dgvShipment_CellClick;
             // 

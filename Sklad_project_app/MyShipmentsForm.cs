@@ -21,8 +21,10 @@ namespace Sklad_project_app
                 var currentUserId = CurrentUser.User.Id;
 
                 var allShipments = db.Shipments
-                    .Include("Client")
-                    .Include("ShipmentItems")
+                    .Include(s => s.Client)
+                    .Include(s => s.ShipmentItems)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Stock)
                     .ToList();
 
                 dgvMyShipments.Rows.Clear();
@@ -31,6 +33,7 @@ namespace Sklad_project_app
                 dgvMyShipments.Columns.Add("colClient", "Клиент");
                 dgvMyShipments.Columns.Add("colDate", "Дата");
                 dgvMyShipments.Columns.Add("colItems", "Товаров");
+                dgvMyShipments.Columns.Add("colTotal", "Сумма, руб.");
 
                 foreach (var shipment in allShipments)
                 {
@@ -42,6 +45,7 @@ namespace Sklad_project_app
                     var clientName = "—";
                     var date = "—";
                     int itemCount = 0;
+                    decimal totalAmount = 0;
 
                     if (shipment.Client != null)
                     {
@@ -55,8 +59,9 @@ namespace Sklad_project_app
                     {
                         itemCount = shipment.ShipmentItems.Count;
                     }
+                    totalAmount = shipment.ShipmentItems?.Sum(i => i.Amount) ?? 0;
 
-                    dgvMyShipments.Rows.Add(shipment.Id, clientName, date, itemCount);
+                    dgvMyShipments.Rows.Add(shipment.Id, clientName, date, itemCount, totalAmount);
                 }
             }
         }

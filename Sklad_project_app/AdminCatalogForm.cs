@@ -673,7 +673,9 @@ namespace Sklad_project_app
 
         private void btnSuplies_Click(object sender, EventArgs e)
         {
-
+            var suppliesForm = new SuppliesForm();
+            suppliesForm.ShowDialog();
+            LoadProducts();
         }
 
         private void btnReports_Click(object sender, EventArgs e)
