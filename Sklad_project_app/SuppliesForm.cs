@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sklad_project_app.Models;
+using Sklad_project_app.Import;
+using Newtonsoft.Json;
 using Sklad_project_app;
 
 
@@ -150,8 +152,34 @@ namespace Sklad_project_app
                         }
                     }
                 }
+                decimal priceFrom = 0;
+                decimal priceTo = 1000000;
+                decimal.TryParse(txtPriceFrom.Text, out priceFrom);
+                decimal.TryParse(txtPriceTo.Text, out priceTo);
 
-                lblFound.Text = $"Найдено: {afterDate.Count} из {totalCount}";
+                if (priceFrom < 0 || priceTo < 0)
+                {
+                    MessageBox.Show("Цена не может быть отрицательной", "Ошибка",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (priceFrom < 0) priceFrom = 0;
+                    if (priceTo < 0) priceTo = 1000000;
+                }
+
+                if (priceFrom > priceTo)
+                {
+                    (priceFrom, priceTo) = (priceTo, priceFrom);
+                }
+
+                var afterPrice = new List<SuppliesItem>();
+                foreach (var supply in afterDate)
+                {
+                    if (supply.PurchasePrice >= priceFrom && supply.PurchasePrice <= priceTo)
+                    {
+                        afterPrice.Add(supply);
+                    }
+                }
+
+                lblFound.Text = $"Найдено: {afterPrice.Count} из {totalCount}";
 
                 dgvProducts.Rows.Clear();
                 dgvProducts.Columns.Clear();
@@ -171,7 +199,7 @@ namespace Sklad_project_app
                 dgvProducts.Columns["colProductId"].Visible = false;
                 dgvProducts.Columns["colId"].Visible = false;
 
-                foreach (var supply in afterDate)
+                foreach (var supply in afterPrice)
                 {
                     var productName = supply.Product?.Name ?? "—";
                     var categoryName = supply.Product?.Category?.Name ?? "—";
@@ -345,7 +373,7 @@ namespace Sklad_project_app
             dtpDate.Visible = true;
             btnSave.Visible = true;
             cmbProduct.Visible = true;
-        
+
             panelView.Visible = true;
             panelView.BringToFront();
             lblPanelTitle.Text = "Добавление";
@@ -357,12 +385,130 @@ namespace Sklad_project_app
             txtRestView.Text = "";
 
             cmbProduct.SelectedIndex = -1;
-   
+
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = @"..\..\..\Files";
+            ofd.Title = "Выберите JSON файл с поставками";
+            ofd.Filter = "JSON файлы (*.json)|*.json";
 
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string json = File.ReadAllText(ofd.FileName);
+                    var supplies = JsonConvert.DeserializeObject<List<ImportSupplies>>(json);
+
+                    if (supplies == null || supplies.Count == 0)
+                    {
+                        MessageBox.Show("Файл пуст");
+                        return;
+                    }
+
+                    DialogResult result = MessageBox.Show(
+                        $"Найдено {supplies.Count} позиций. Импортировать?",
+                        "Подтверждение",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        using (var db = new SkladContext())
+                        {
+                            foreach (var item in supplies)
+                            {
+                                // Ищем товар
+                                var product = db.Products.FirstOrDefault(p =>
+                                    p.Article == item.Article || p.Name == item.ProductName);
+
+                                if (product == null)
+                                {
+                                    MessageBox.Show($"Товар '{item.ProductName}' не найден. Сначала добавьте его в каталог.");
+                                    return;
+                                }
+
+                                // Создаём поставку
+                                var supply = new Supplies
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SuppliesDate = item.Date.ToUniversalTime(),
+                                    UserId = CurrentUser.User.Id,
+                                };
+                                db.Supplies.Add(supply);
+                                db.SaveChanges();
+
+                                var supplyItem = new SuppliesItem
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SuppliesId = supply.Id,
+                                    ProductId = product.Id,
+                                    Quantity = item.Quantity,
+                                    PurchasePrice = item.Price
+                                };
+                                db.SuppliesItems.Add(supplyItem);
+
+                                // Обновляем остаток
+                                var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
+                                if (stock != null)
+                                    stock.Rest += item.Quantity;
+                                else
+                                {
+                                    stock = new Stock
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        ProductId = product.Id,
+                                        Rest = item.Quantity,
+                                        PurchasePrice = item.Price
+                                    };
+                                    db.Stocks.Add(stock);
+                                }
+                            }
+                            db.SaveChanges();
+                        }
+
+                        LoadProducts();
+                        MessageBox.Show($"Импортировано {supplies.Count} поставок!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка: {ex.Message}");
+                }
+            }
+        }
+        private Guid GetOrCreateCategory(string categoryName, SkladContext db)
+        {
+            var category = db.Categories.FirstOrDefault(c => c.Name == categoryName);
+            if (category == null)
+            {
+                category = new Category
+                {
+                    Id = Guid.NewGuid(),
+                    Name = categoryName
+                };
+                db.Categories.Add(category);
+                db.SaveChanges();
+            }
+            return category.Id;
+        }
+
+        private Guid GetOrCreateUnit(string unitName, SkladContext db)
+        {
+            var unit = db.Units.FirstOrDefault(u => u.Name == unitName);
+            if (unit == null)
+            {
+                unit = new Unit
+                {
+                    Id = Guid.NewGuid(),
+                    Name = unitName
+                };
+                db.Units.Add(unit);
+                db.SaveChanges();
+            }
+            return unit.Id;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -449,12 +595,12 @@ namespace Sklad_project_app
 
         private void cmbArtic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cmbProduct.SelectedIndex == -1) return;
+            if (cmbProduct.SelectedIndex == -1) return;
 
             var product = (Product)cmbProduct.SelectedItem;
             txtNameView.Text = product.Name;
@@ -464,8 +610,18 @@ namespace Sklad_project_app
 
         private void cmbCateg_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void txtPriceFrom_TextChanged(object sender, EventArgs e)
+        {
             
-        }  
+        }
+
+        private void txtPriceTo_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
     }
 
 }

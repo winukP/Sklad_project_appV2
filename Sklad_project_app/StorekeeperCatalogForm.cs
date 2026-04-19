@@ -360,7 +360,9 @@ namespace Sklad_project_app
 
         private void btnReports_Click(object sender, EventArgs e)
         {
-
+            var reportsForm = new ReportsForm();
+            reportsForm.ShowDialog();
+            LoadProducts();
         }
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
@@ -369,6 +371,11 @@ namespace Sklad_project_app
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtPriceFrom_TextChanged(object sender, EventArgs e)
         {
 
         }

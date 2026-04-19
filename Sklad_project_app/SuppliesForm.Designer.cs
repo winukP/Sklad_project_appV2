@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
@@ -364,6 +364,7 @@
             txtPriceFrom.Size = new Size(70, 27);
             txtPriceFrom.TabIndex = 7;
             txtPriceFrom.Text = "0";
+            txtPriceFrom.TextChanged += txtPriceFrom_TextChanged;
             // 
             // txtPriceTo
             // 
@@ -372,6 +373,7 @@
             txtPriceTo.Size = new Size(70, 27);
             txtPriceTo.TabIndex = 8;
             txtPriceTo.Text = "1000000";
+            txtPriceTo.TextChanged += txtPriceTo_TextChanged;
             // 
             // lblFound
             // 
@@ -400,14 +402,14 @@
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
             dgvProducts.Location = new Point(140, 180);

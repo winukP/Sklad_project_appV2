@@ -1,6 +1,6 @@
 ﻿namespace Sklad_project_app
 {
-    partial class StorekeeperCatalogForm
+    partial class ReportsForm
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
@@ -27,21 +27,20 @@
             btnShipment = new Button();
             btnMyShipments = new Button();
             panelActions = new Panel();
-            btnView = new Button();
+            btnExport = new Button();
             btnRefresh = new Button();
             panelFilters = new Panel();
-            lblSearch = new Label();
-            txtSearch = new TextBox();
-            lblCategory = new Label();
-            cmbCategory = new ComboBox();
-            lblAvailability = new Label();
-            cmbAvailability = new ComboBox();
+            label1 = new Label();
+            dtpDateTo = new DateTimePicker();
+            dtpDateFrom = new DateTimePicker();
             lblPrice = new Label();
-            txtPriceFrom = new TextBox();
-            txtPriceTo = new TextBox();
+            lblCategory = new Label();
+            txtProfitFrom = new TextBox();
+            txtProfitTo = new TextBox();
+            cmbClient = new ComboBox();
             lblFound = new Label();
             btnReset = new Button();
-            dgvProducts = new DataGridView();
+            dgvReports = new DataGridView();
             panelView = new Panel();
             lblPanelTitle = new Label();
             lblArticleView = new Label();
@@ -61,7 +60,7 @@
             panelLeft.SuspendLayout();
             panelActions.SuspendLayout();
             panelFilters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvProducts).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvReports).BeginInit();
             panelView.SuspendLayout();
             SuspendLayout();
             // 
@@ -206,25 +205,25 @@
             // panelActions
             // 
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
-            panelActions.Controls.Add(btnView);
+            panelActions.Controls.Add(btnExport);
             panelActions.Controls.Add(btnRefresh);
             panelActions.Location = new Point(140, 35);
             panelActions.Name = "panelActions";
             panelActions.Size = new Size(960, 45);
             panelActions.TabIndex = 2;
             // 
-            // btnView
+            // btnExport
             // 
-            btnView.BackColor = Color.FromArgb(70, 70, 70);
-            btnView.FlatStyle = FlatStyle.Flat;
-            btnView.ForeColor = Color.White;
-            btnView.Location = new Point(10, 8);
-            btnView.Name = "btnView";
-            btnView.Size = new Size(121, 28);
-            btnView.TabIndex = 0;
-            btnView.Text = "Просмотреть";
-            btnView.UseVisualStyleBackColor = false;
-            btnView.Click += btnView_Click;
+            btnExport.BackColor = Color.FromArgb(70, 70, 70);
+            btnExport.FlatStyle = FlatStyle.Flat;
+            btnExport.ForeColor = Color.White;
+            btnExport.Location = new Point(10, 8);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(121, 28);
+            btnExport.TabIndex = 0;
+            btnExport.Text = "Экспорт";
+            btnExport.UseVisualStyleBackColor = false;
+            btnExport.Click += btnExport_Click;
             // 
             // btnRefresh
             // 
@@ -242,15 +241,14 @@
             // panelFilters
             // 
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
-            panelFilters.Controls.Add(lblSearch);
-            panelFilters.Controls.Add(txtSearch);
-            panelFilters.Controls.Add(lblCategory);
-            panelFilters.Controls.Add(cmbCategory);
-            panelFilters.Controls.Add(lblAvailability);
-            panelFilters.Controls.Add(cmbAvailability);
+            panelFilters.Controls.Add(label1);
+            panelFilters.Controls.Add(dtpDateTo);
+            panelFilters.Controls.Add(dtpDateFrom);
             panelFilters.Controls.Add(lblPrice);
-            panelFilters.Controls.Add(txtPriceFrom);
-            panelFilters.Controls.Add(txtPriceTo);
+            panelFilters.Controls.Add(lblCategory);
+            panelFilters.Controls.Add(txtProfitFrom);
+            panelFilters.Controls.Add(txtProfitTo);
+            panelFilters.Controls.Add(cmbClient);
             panelFilters.Controls.Add(lblFound);
             panelFilters.Controls.Add(btnReset);
             panelFilters.Location = new Point(140, 80);
@@ -258,61 +256,31 @@
             panelFilters.Size = new Size(960, 102);
             panelFilters.TabIndex = 3;
             // 
-            // lblSearch
+            // label1
             // 
-            lblSearch.AutoSize = true;
-            lblSearch.Font = new Font("Arial", 8F);
-            lblSearch.Location = new Point(10, 8);
-            lblSearch.Name = "lblSearch";
-            lblSearch.Size = new Size(188, 16);
-            lblSearch.TabIndex = 0;
-            lblSearch.Text = "Поиск (название / артикул):";
+            label1.AutoSize = true;
+            label1.Font = new Font("Arial", 8F);
+            label1.Location = new Point(10, 8);
+            label1.Name = "label1";
+            label1.Size = new Size(60, 16);
+            label1.TabIndex = 11;
+            label1.Text = "Период:";
             // 
-            // txtSearch
+            // dtpDateTo
             // 
-            txtSearch.Location = new Point(10, 25);
-            txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(160, 27);
-            txtSearch.TabIndex = 1;
-            txtSearch.TextChanged += txtSearch_TextChanged;
+            dtpDateTo.Location = new Point(175, 25);
+            dtpDateTo.Name = "dtpDateTo";
+            dtpDateTo.Size = new Size(158, 27);
+            dtpDateTo.TabIndex = 7;
+            dtpDateTo.ValueChanged += dtpDateTo_ValueChanged;
             // 
-            // lblCategory
+            // dtpDateFrom
             // 
-            lblCategory.AutoSize = true;
-            lblCategory.Font = new Font("Arial", 8F);
-            lblCategory.Location = new Point(204, 8);
-            lblCategory.Name = "lblCategory";
-            lblCategory.Size = new Size(79, 16);
-            lblCategory.TabIndex = 2;
-            lblCategory.Text = "Категория:";
-            // 
-            // cmbCategory
-            // 
-            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbCategory.Location = new Point(204, 25);
-            cmbCategory.Name = "cmbCategory";
-            cmbCategory.Size = new Size(160, 28);
-            cmbCategory.TabIndex = 3;
-            cmbCategory.SelectedIndexChanged += cmbCategory_SelectedIndexChanged;
-            // 
-            // lblAvailability
-            // 
-            lblAvailability.AutoSize = true;
-            lblAvailability.Font = new Font("Arial", 8F);
-            lblAvailability.Location = new Point(379, 8);
-            lblAvailability.Name = "lblAvailability";
-            lblAvailability.Size = new Size(67, 16);
-            lblAvailability.TabIndex = 4;
-            lblAvailability.Text = "Наличие:";
-            // 
-            // cmbAvailability
-            // 
-            cmbAvailability.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbAvailability.Location = new Point(379, 25);
-            cmbAvailability.Name = "cmbAvailability";
-            cmbAvailability.Size = new Size(130, 28);
-            cmbAvailability.TabIndex = 5;
-            cmbAvailability.SelectedIndexChanged += cmbAvailability_SelectedIndexChanged;
+            dtpDateFrom.Location = new Point(10, 25);
+            dtpDateFrom.Name = "dtpDateFrom";
+            dtpDateFrom.Size = new Size(158, 27);
+            dtpDateFrom.TabIndex = 6;
+            dtpDateFrom.ValueChanged += dtpDateFrom_ValueChanged;
             // 
             // lblPrice
             // 
@@ -320,26 +288,45 @@
             lblPrice.Font = new Font("Arial", 8F);
             lblPrice.Location = new Point(524, 8);
             lblPrice.Name = "lblPrice";
-            lblPrice.Size = new Size(45, 16);
+            lblPrice.Size = new Size(70, 16);
             lblPrice.TabIndex = 6;
-            lblPrice.Text = "Цена:";
+            lblPrice.Text = "Прибыль:";
             // 
-            // txtPriceFrom
+            // lblCategory
             // 
-            txtPriceFrom.Location = new Point(524, 25);
-            txtPriceFrom.Name = "txtPriceFrom";
-            txtPriceFrom.Size = new Size(70, 27);
-            txtPriceFrom.TabIndex = 7;
-            txtPriceFrom.Text = "0";
-            txtPriceFrom.TextChanged += txtPriceFrom_TextChanged;
+            lblCategory.AutoSize = true;
+            lblCategory.Font = new Font("Arial", 8F);
+            lblCategory.Location = new Point(364, 8);
+            lblCategory.Name = "lblCategory";
+            lblCategory.Size = new Size(58, 16);
+            lblCategory.TabIndex = 2;
+            lblCategory.Text = "Клиент:";
             // 
-            // txtPriceTo
+            // txtProfitFrom
             // 
-            txtPriceTo.Location = new Point(604, 25);
-            txtPriceTo.Name = "txtPriceTo";
-            txtPriceTo.Size = new Size(70, 27);
-            txtPriceTo.TabIndex = 8;
-            txtPriceTo.Text = "1000000";
+            txtProfitFrom.Location = new Point(524, 25);
+            txtProfitFrom.Name = "txtProfitFrom";
+            txtProfitFrom.Size = new Size(70, 27);
+            txtProfitFrom.TabIndex = 7;
+            txtProfitFrom.Text = "0";
+            txtProfitFrom.TextChanged += txtProfitFrom_TextChanged;
+            // 
+            // txtProfitTo
+            // 
+            txtProfitTo.Location = new Point(604, 25);
+            txtProfitTo.Name = "txtProfitTo";
+            txtProfitTo.Size = new Size(70, 27);
+            txtProfitTo.TabIndex = 8;
+            txtProfitTo.Text = "1000000";
+            // 
+            // cmbClient
+            // 
+            cmbClient.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbClient.Location = new Point(358, 24);
+            cmbClient.Name = "cmbClient";
+            cmbClient.Size = new Size(160, 28);
+            cmbClient.TabIndex = 3;
+            cmbClient.SelectedIndexChanged += cmbCategory_SelectedIndexChanged;
             // 
             // lblFound
             // 
@@ -361,32 +348,32 @@
             btnReset.Text = "Сбросить";
             btnReset.Click += btnReset_Click;
             // 
-            // dgvProducts
+            // dgvReports
             // 
-            dgvProducts.AllowUserToAddRows = false;
-            dgvProducts.AllowUserToDeleteRows = false;
-            dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvProducts.BackgroundColor = Color.White;
-            dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dgvProducts.ColumnHeadersHeight = 29;
-            dgvProducts.EnableHeadersVisualStyles = false;
-            dgvProducts.Location = new Point(140, 180);
-            dgvProducts.MultiSelect = false;
-            dgvProducts.Name = "dgvProducts";
-            dgvProducts.ReadOnly = true;
-            dgvProducts.RowHeadersVisible = false;
-            dgvProducts.RowHeadersWidth = 51;
-            dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProducts.Size = new Size(960, 420);
-            dgvProducts.TabIndex = 5;
+            dgvReports.AllowUserToAddRows = false;
+            dgvReports.AllowUserToDeleteRows = false;
+            dgvReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvReports.BackgroundColor = Color.White;
+            dgvReports.BorderStyle = BorderStyle.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvReports.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvReports.ColumnHeadersHeight = 29;
+            dgvReports.EnableHeadersVisualStyles = false;
+            dgvReports.Location = new Point(140, 180);
+            dgvReports.MultiSelect = false;
+            dgvReports.Name = "dgvReports";
+            dgvReports.ReadOnly = true;
+            dgvReports.RowHeadersVisible = false;
+            dgvReports.RowHeadersWidth = 51;
+            dgvReports.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvReports.Size = new Size(960, 420);
+            dgvReports.TabIndex = 5;
             // 
             // panelView
             // 
@@ -567,7 +554,7 @@
             btnCloseView.UseVisualStyleBackColor = false;
             btnCloseView.Click += btnCloseView_Click;
             // 
-            // StorekeeperCatalogForm
+            // ReportsForm
             // 
             BackColor = Color.White;
             ClientSize = new Size(1100, 600);
@@ -576,18 +563,18 @@
             Controls.Add(panelActions);
             Controls.Add(panelFilters);
             Controls.Add(panelView);
-            Controls.Add(dgvProducts);
-            Name = "StorekeeperCatalogForm";
+            Controls.Add(dgvReports);
+            Name = "ReportsForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Каталог товаров - Кладовщик";
-            Load += StorekeeperCatalogForm_Load;
+            Load += ReportsForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelLeft.ResumeLayout(false);
             panelActions.ResumeLayout(false);
             panelFilters.ResumeLayout(false);
             panelFilters.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvProducts).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvReports).EndInit();
             panelView.ResumeLayout(false);
             panelView.PerformLayout();
             ResumeLayout(false);
@@ -602,21 +589,17 @@
         private System.Windows.Forms.Button btnShipment;
         private System.Windows.Forms.Button btnMyShipments;
         private System.Windows.Forms.Panel panelActions;
-        private System.Windows.Forms.Button btnView;
+        private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Panel panelFilters;
-        private System.Windows.Forms.Label lblSearch;
-        private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Label lblCategory;
-        private System.Windows.Forms.ComboBox cmbCategory;
-        private System.Windows.Forms.Label lblAvailability;
-        private System.Windows.Forms.ComboBox cmbAvailability;
+        private System.Windows.Forms.ComboBox cmbClient;
         private System.Windows.Forms.Label lblPrice;
-        private System.Windows.Forms.TextBox txtPriceFrom;
-        private System.Windows.Forms.TextBox txtPriceTo;
+        private System.Windows.Forms.TextBox txtProfitFrom;
+        private System.Windows.Forms.TextBox txtProfitTo;
         private System.Windows.Forms.Label lblFound;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.DataGridView dgvProducts;
+        private System.Windows.Forms.DataGridView dgvReports;
         private System.Windows.Forms.Panel panelView;
         private System.Windows.Forms.Label lblPanelTitle;
         private System.Windows.Forms.Label lblArticleView;
@@ -636,5 +619,8 @@
         private Button btnReports;
         private Button btnExpirationDates;
         private Button btnSettings;
+        private DateTimePicker dtpDateFrom;
+        private DateTimePicker dtpDateTo;
+        private Label label1;
     }
 }
