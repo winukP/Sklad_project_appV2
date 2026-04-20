@@ -260,7 +260,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial", 8F);
-            label1.Location = new Point(10, 8);
+            label1.Location = new Point(11, 8);
             label1.Name = "label1";
             label1.Size = new Size(60, 16);
             label1.TabIndex = 11;
@@ -268,7 +268,7 @@
             // 
             // dtpDateTo
             // 
-            dtpDateTo.Location = new Point(175, 25);
+            dtpDateTo.Location = new Point(182, 25);
             dtpDateTo.Name = "dtpDateTo";
             dtpDateTo.Size = new Size(158, 27);
             dtpDateTo.TabIndex = 7;
@@ -296,7 +296,7 @@
             // 
             lblCategory.AutoSize = true;
             lblCategory.Font = new Font("Arial", 8F);
-            lblCategory.Location = new Point(364, 8);
+            lblCategory.Location = new Point(354, 8);
             lblCategory.Name = "lblCategory";
             lblCategory.Size = new Size(58, 16);
             lblCategory.TabIndex = 2;
@@ -322,7 +322,7 @@
             // cmbClient
             // 
             cmbClient.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbClient.Location = new Point(358, 24);
+            cmbClient.Location = new Point(353, 24);
             cmbClient.Name = "cmbClient";
             cmbClient.Size = new Size(160, 28);
             cmbClient.TabIndex = 3;

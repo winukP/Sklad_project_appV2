@@ -22,6 +22,7 @@ namespace Sklad_project_app
                 var shipments = db.Shipments
                     .Include("Client")
                     .Include("User")
+                    .OrderBy(s => s.ShipmentDate)
                     .ToList();
 
                 dgvHistory.Rows.Clear();
@@ -34,6 +35,7 @@ namespace Sklad_project_app
                 dgvHistory.Columns.Add("colShipIdHidden", "ID");
                 dgvHistory.Columns["colShipIdHidden"].Visible = false;
 
+                var number = 1;
                 foreach (var shipment in shipments)
                 {
                     var clientName = "—";
@@ -56,7 +58,8 @@ namespace Sklad_project_app
                         date = shipment.ShipmentDate.Value.ToString("dd.MM.yyyy");
                     }
 
-                    dgvHistory.Rows.Add(shipment.Id, clientName, userName, date, totalAmount, shipment.Id);
+                    dgvHistory.Rows.Add(number, clientName, userName, date, totalAmount, shipment.Id);
+                    number++;
                 }
             }
         }

@@ -54,6 +54,7 @@ namespace Sklad_project_app
                     .Include(s => s.ShipmentItems)
                     .ThenInclude(i => i.Product)
                     .ThenInclude(p => p.Stock)
+                    .OrderBy(s => s.ShipmentDate)
                     .ToList();
 
                 int totalCount = allShipments.Count;
@@ -305,7 +306,7 @@ namespace Sklad_project_app
         {
             var suppliesForm = new SuppliesForm();
             suppliesForm.ShowDialog();
-            LoadReports();
+            this.Close();
         }
 
         private void btnReports_Click(object sender, EventArgs e)

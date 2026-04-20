@@ -16,7 +16,7 @@ namespace Sklad_project_app
         {
             InitializeComponent();
             LoadProductsToComboBox();
-            LoadProducts();
+            LoadSupplies();
             this.Text = AppResources.CatalogTitle;
             lblUserInfo.Text = AppResources.LblStorekeeper
                 + CurrentUser.User.Surname + " " + CurrentUser.User.Name;
@@ -37,7 +37,7 @@ namespace Sklad_project_app
         private void SuppliesCatalogForm_Load(object sender, EventArgs e)
         {
             LoadCategoriesToFilter();
-            LoadProducts();
+            LoadSupplies();
             panelView.Visible = false;
         }
 
@@ -80,7 +80,7 @@ namespace Sklad_project_app
             }
         }
 
-        private void LoadProducts()
+        private void LoadSupplies()
         {
             using (var db = new SkladContext())
             {
@@ -89,6 +89,7 @@ namespace Sklad_project_app
                     .ThenInclude(p => p.Category)
                     .Include(s => s.Product)
                     .Include(s => s.Supplies)
+                    .OrderBy(s => s.Supplies.SuppliesDate)
                     .ToList();
 
                 int totalCount = allSupplies.Count;
@@ -103,8 +104,8 @@ namespace Sklad_project_app
                 {
                     foreach (var supply in allSupplies)
                     {
-                        var productName = supply.Product?.Name?.ToLower() ?? "";
-                        var productArticle = supply.Product?.Article?.ToLower() ?? "";
+                        var productName = supply.Product.Name.ToLower() ?? "";
+                        var productArticle = supply.Product.Article.ToLower() ?? "";
 
                         if (productName.Contains(searchText) || productArticle.Contains(searchText))
                         {
@@ -144,7 +145,7 @@ namespace Sklad_project_app
 
                     foreach (var supply in afterCategory)
                     {
-                        var supplyDate = supply.Supplies?.SuppliesDate.Date ?? DateTime.MinValue;
+                        var supplyDate = supply.Supplies?.SuppliesDate.Date;
 
                         if (supplyDate == selectedDate)
                         {
@@ -201,17 +202,17 @@ namespace Sklad_project_app
 
                 foreach (var supply in afterPrice)
                 {
-                    var productName = supply.Product?.Name ?? "—";
-                    var categoryName = supply.Product?.Category?.Name ?? "—";
-                    var article = supply.Product?.Article ?? "—";
-                    var supplyDate = supply.Supplies?.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
+                    var productName = supply.Product.Name ?? "—";
+                    var categoryName = supply.Product.Category?.Name ?? "—";
+                    var article = supply.Product.Article ?? "—";
+                    var supplyDate = supply.Supplies.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
 
                     dgvProducts.Rows.Add(
                         article,
                         productName,
                         categoryName,
                         supply.Quantity,
-                        supply.PurchasePrice.ToString("0.00") + " руб.",
+                        supply.PurchasePrice.ToString("0.00"),
                         supplyDate,
                         supply.SuppliesId,
                         supply.ProductId,
@@ -220,7 +221,6 @@ namespace Sklad_project_app
                 }
             }
         }
-
 
         private void btnView_Click(object sender, EventArgs e)
         {
@@ -239,22 +239,22 @@ namespace Sklad_project_app
             string date = "";
 
             if (dgvProducts.Columns.Contains("colArticle"))
-                article = selectedRow.Cells["colArticle"].Value?.ToString();
+                article = selectedRow.Cells["colArticle"].Value.ToString();
 
             if (dgvProducts.Columns.Contains("colProductName"))
-                productName = selectedRow.Cells["colProductName"].Value?.ToString();
+                productName = selectedRow.Cells["colProductName"].Value.ToString();
 
             if (dgvProducts.Columns.Contains("colCategory"))
-                category = selectedRow.Cells["colCategory"].Value?.ToString();
+                category = selectedRow.Cells["colCategory"].Value.ToString();
 
             if (dgvProducts.Columns.Contains("colPrice"))
-                price = selectedRow.Cells["colPrice"].Value?.ToString();
+                price = selectedRow.Cells["colPrice"].Value.ToString();
 
             if (dgvProducts.Columns.Contains("colQuantity"))
-                quantity = selectedRow.Cells["colQuantity"].Value?.ToString();
+                quantity = selectedRow.Cells["colQuantity"].Value.ToString();
 
             if (dgvProducts.Columns.Contains("colDate"))
-                date = selectedRow.Cells["colDate"].Value?.ToString();
+                date = selectedRow.Cells["colDate"].Value.ToString();
 
             txtArticleView.Text = article;
             txtNameView.Text = productName;
@@ -287,7 +287,7 @@ namespace Sklad_project_app
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -297,7 +297,7 @@ namespace Sklad_project_app
             cmbDate.SelectedIndex = 0;
             txtPriceFrom.Text = "0";
             txtPriceTo.Text = "1000000";
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
@@ -318,7 +318,7 @@ namespace Sklad_project_app
         {
             var form = new ShipmentForm();
             form.ShowDialog();
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void btnMyShipments_Click(object sender, EventArgs e)
@@ -329,17 +329,17 @@ namespace Sklad_project_app
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void cmbCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void cmbDate_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadProducts();
+            LoadSupplies();
         }
 
         private void btnSuplies_Click(object sender, EventArgs e)
@@ -349,7 +349,9 @@ namespace Sklad_project_app
 
         private void btnReports_Click(object sender, EventArgs e)
         {
-
+            var reportsForm = new ReportsForm();
+            reportsForm.ShowDialog();
+            this.Close();
         }
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
@@ -370,6 +372,7 @@ namespace Sklad_project_app
             txtPriceView.ReadOnly = false;
             txtRestView.ReadOnly = false;
             txtArticleView.ReadOnly = true;
+
             dtpDate.Visible = true;
             btnSave.Visible = true;
             cmbProduct.Visible = true;
@@ -377,6 +380,7 @@ namespace Sklad_project_app
             panelView.Visible = true;
             panelView.BringToFront();
             lblPanelTitle.Text = "Добавление";
+
             txtArticleView.Text = "";
             txtNameView.Text = "";
             txtCategoryView.Text = "";
@@ -385,7 +389,6 @@ namespace Sklad_project_app
             txtRestView.Text = "";
 
             cmbProduct.SelectedIndex = -1;
-
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -420,7 +423,7 @@ namespace Sklad_project_app
                         {
                             foreach (var item in supplies)
                             {
-                                // Ищем товар
+                                //Поиск
                                 var product = db.Products.FirstOrDefault(p =>
                                     p.Article == item.Article || p.Name == item.ProductName);
 
@@ -430,7 +433,7 @@ namespace Sklad_project_app
                                     return;
                                 }
 
-                                // Создаём поставку
+                                //приход
                                 var supply = new Supplies
                                 {
                                     Id = Guid.NewGuid(),
@@ -450,7 +453,7 @@ namespace Sklad_project_app
                                 };
                                 db.SuppliesItems.Add(supplyItem);
 
-                                // Обновляем остаток
+                                //остаток
                                 var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
                                 if (stock != null)
                                     stock.Rest += item.Quantity;
@@ -469,7 +472,7 @@ namespace Sklad_project_app
                             db.SaveChanges();
                         }
 
-                        LoadProducts();
+                        LoadSupplies();
                         MessageBox.Show($"Импортировано {supplies.Count} поставок!");
                     }
                 }
@@ -478,37 +481,6 @@ namespace Sklad_project_app
                     MessageBox.Show($"Ошибка: {ex.Message}");
                 }
             }
-        }
-        private Guid GetOrCreateCategory(string categoryName, SkladContext db)
-        {
-            var category = db.Categories.FirstOrDefault(c => c.Name == categoryName);
-            if (category == null)
-            {
-                category = new Category
-                {
-                    Id = Guid.NewGuid(),
-                    Name = categoryName
-                };
-                db.Categories.Add(category);
-                db.SaveChanges();
-            }
-            return category.Id;
-        }
-
-        private Guid GetOrCreateUnit(string unitName, SkladContext db)
-        {
-            var unit = db.Units.FirstOrDefault(u => u.Name == unitName);
-            if (unit == null)
-            {
-                unit = new Unit
-                {
-                    Id = Guid.NewGuid(),
-                    Name = unitName
-                };
-                db.Units.Add(unit);
-                db.SaveChanges();
-            }
-            return unit.Id;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -589,7 +561,7 @@ namespace Sklad_project_app
             txtRestView.Text = "";
 
             panelView.Visible = false;
-            LoadProducts();
+            LoadSupplies();
             MessageBox.Show("Поставка сохранена!");
         }
 

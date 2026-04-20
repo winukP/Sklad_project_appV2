@@ -216,7 +216,7 @@ namespace Sklad_project_app
 
                     if (product.Stock != null)
                     {
-                        price = product.Stock.PurchasePrice.ToString("0") + " руб.";
+                        price = product.Stock.PurchasePrice.ToString("0.00");
                         rest = product.Stock.Rest.ToString();
                     }
 
@@ -708,7 +708,8 @@ namespace Sklad_project_app
 
         private void btnReports_Click(object sender, EventArgs e)
         {
-
+            var reportsForm = new ReportsForm();
+            reportsForm.ShowDialog();
         }
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
