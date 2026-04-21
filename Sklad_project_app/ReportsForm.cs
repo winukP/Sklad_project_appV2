@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sklad_project_app.Models;
+using Sklad_project_app.Сurrency;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,7 +46,7 @@ namespace Sklad_project_app
             }
         }
 
-        private void LoadReports()
+        public void LoadReports()
         {
             using (var db = new SkladContext())
             {
@@ -173,12 +174,12 @@ namespace Sklad_project_app
                     dgvReports.Rows.Add(
                         shipment.ShipmentDate?.ToString("dd.MM.yyyy") ?? "—",
                         shipment.Client?.Name ?? "—",
-                        shipmentAmount.ToString("0.00"),
-                        shipmentProfit.ToString("0.00")
+                        CurrencyHelp.Format(shipmentAmount),
+                        CurrencyHelp.Format(shipmentProfit)
                     );
                 }
 
-                dgvReports.Rows.Add("ИТОГО:", "", totalAmount.ToString("0.00"), totalProfit.ToString("0.00"));
+                dgvReports.Rows.Add("ИТОГО:", "", CurrencyHelp.Format(totalAmount), CurrencyHelp.Format(totalProfit));
             }
         }
 
@@ -321,7 +322,9 @@ namespace Sklad_project_app
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var settingsForm = new CurrencyForm();
+            settingsForm.ShowDialog();
+            this.Close();
         }
 
         private void lblSearch_Click(object sender, EventArgs e)

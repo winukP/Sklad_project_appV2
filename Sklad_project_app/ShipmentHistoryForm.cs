@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sklad_project_app.Сurrency;
 
 
 namespace Sklad_project_app
@@ -31,7 +32,7 @@ namespace Sklad_project_app
                 dgvHistory.Columns.Add("colShipClient", "Клиент");
                 dgvHistory.Columns.Add("colShipUser", "Кладовщик");
                 dgvHistory.Columns.Add("colShipDate", "Дата");
-                dgvHistory.Columns.Add("colTotalAmount", "Сумма, руб.");
+                dgvHistory.Columns.Add("colTotalAmount", "Сумма");
                 dgvHistory.Columns.Add("colShipIdHidden", "ID");
                 dgvHistory.Columns["colShipIdHidden"].Visible = false;
 
@@ -58,7 +59,7 @@ namespace Sklad_project_app
                         date = shipment.ShipmentDate.Value.ToString("dd.MM.yyyy");
                     }
 
-                    dgvHistory.Rows.Add(number, clientName, userName, date, totalAmount, shipment.Id);
+                    dgvHistory.Rows.Add(number, clientName, userName, date, CurrencyHelp.Format(totalAmount), shipment.Id);
                     number++;
                 }
             }
@@ -95,7 +96,7 @@ namespace Sklad_project_app
                 dgvHistoryItems.Columns.Clear();
                 dgvHistoryItems.Columns.Add("colItemName", "Товар");
                 dgvHistoryItems.Columns.Add("colItemQty", "Количество");
-                dgvHistoryItems.Columns.Add("colItemAmount", "Сумма, руб.");
+                dgvHistoryItems.Columns.Add("colItemAmount", "Сумма");
 
                 foreach (var item in allItems)
                 {
@@ -106,7 +107,7 @@ namespace Sklad_project_app
                         {
                             productName = item.Product.Name;
                         }
-                        dgvHistoryItems.Rows.Add(productName, item.Quantity, item.Amount);
+                        dgvHistoryItems.Rows.Add(productName, item.Quantity, CurrencyHelp.Format(item.Amount));
                     }
                 }
             }

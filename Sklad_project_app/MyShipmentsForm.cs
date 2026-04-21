@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sklad_project_app.Сurrency;
 
 namespace Sklad_project_app
 {
@@ -14,7 +15,7 @@ namespace Sklad_project_app
             LoadMyShipments();
         }
 
-        private void LoadMyShipments()
+        public void LoadMyShipments()
         {
             using (var db = new SkladContext())
             {
@@ -34,7 +35,7 @@ namespace Sklad_project_app
                 dgvMyShipments.Columns.Add("colClient", "Клиент");
                 dgvMyShipments.Columns.Add("colDate", "Дата");
                 dgvMyShipments.Columns.Add("colItems", "Товаров");
-                dgvMyShipments.Columns.Add("colTotal", "Сумма, руб.");
+                dgvMyShipments.Columns.Add("colTotal", "Сумма");
 
                 var number = 1;
                 foreach (var shipment in allShipments)
@@ -63,7 +64,7 @@ namespace Sklad_project_app
                     }
                     totalAmount = shipment.ShipmentItems?.Sum(i => i.Amount) ?? 0;
 
-                    dgvMyShipments.Rows.Add(number, clientName, date, itemCount, totalAmount, shipment.Id);
+                    dgvMyShipments.Rows.Add(number, clientName, date, itemCount, CurrencyHelp.Format(totalAmount), shipment.Id);
                     number++;
                 }
             }

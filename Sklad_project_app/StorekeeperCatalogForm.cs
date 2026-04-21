@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sklad_project_app.Models;
+using Sklad_project_app.Сurrency;
 using Sklad_project_app;
 
 
@@ -45,7 +46,7 @@ namespace Sklad_project_app
             cmbAvailability.SelectedIndex = 0;
         }
 
-        private void LoadProducts()
+        public void LoadProducts()
         {
             using (var db = new SkladContext())
             {
@@ -186,7 +187,7 @@ namespace Sklad_project_app
 
                     if (product.Stock != null)
                     {
-                        price = product.Stock.PurchasePrice.ToString("0.00");
+                        price = CurrencyHelp.Format(product.Stock.PurchasePrice);
                         rest = product.Stock.Rest.ToString();
                     }
 
@@ -371,7 +372,8 @@ namespace Sklad_project_app
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var settingsForm = new CurrencyForm();
+            settingsForm.ShowDialog();
         }
 
         private void txtPriceFrom_TextChanged(object sender, EventArgs e)

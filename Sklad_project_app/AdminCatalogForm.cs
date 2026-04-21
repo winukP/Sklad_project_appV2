@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sklad_project_app.Models;
+using Sklad_project_app.Сurrency;
 
 
 namespace Sklad_project_app
@@ -71,7 +72,7 @@ namespace Sklad_project_app
             cmbAvailability.SelectedIndex = 0;
         }
 
-        private void LoadProducts()
+        public void LoadProducts()
         {
             using (var db = new SkladContext())
             {
@@ -216,7 +217,7 @@ namespace Sklad_project_app
 
                     if (product.Stock != null)
                     {
-                        price = product.Stock.PurchasePrice.ToString("0.00");
+                        price = CurrencyHelp.Format(product.Stock.PurchasePrice);
                         rest = product.Stock.Rest.ToString();
                     }
 
@@ -472,7 +473,7 @@ namespace Sklad_project_app
 
                 if (foundProduct.Stock != null)
                 {
-                    txtPriceEdit.Text = foundProduct.Stock.PurchasePrice.ToString("0");
+                    txtPriceEdit.Text = CurrencyHelp.Format(foundProduct.Stock.PurchasePrice);
                     txtRestEdit.Text = foundProduct.Stock.Rest.ToString();
                 }
                 else
@@ -527,6 +528,22 @@ namespace Sklad_project_app
 
             decimal price;
             int rest;
+
+            if (!decimal.TryParse(txtPriceEdit.Text, out price))
+            {
+                MessageBox.Show(AppResources.MsgPriceError);
+                return;
+            }
+            decimal priceInRub;
+
+            if (CurrencyHelp.GetCurrentCurrency() != "RUB")
+            {
+                priceInRub = price * CurrencyHelp.GetCurrentRate();
+            }
+            else
+            {
+                priceInRub = price;
+            }
 
             if (!decimal.TryParse(txtPriceEdit.Text, out price))
             {
@@ -595,7 +612,7 @@ namespace Sklad_project_app
                     {
                         Id = Guid.NewGuid(),
                         ProductId = newProduct.Id,
-                        PurchasePrice = price,
+                        PurchasePrice = priceInRub,
                         Rest = rest
                     };
                     db.Stocks.Add(newStock);
@@ -638,7 +655,7 @@ namespace Sklad_project_app
                         db.Stocks.Add(foundStock);
                     }
 
-                    foundStock.PurchasePrice = price;
+                    foundStock.PurchasePrice = priceInRub;
                     foundStock.Rest = rest;
 
                     try
@@ -719,7 +736,8 @@ namespace Sklad_project_app
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var settingsForm = new CurrencyForm();
+            settingsForm.ShowDialog();
         }
     }
 }

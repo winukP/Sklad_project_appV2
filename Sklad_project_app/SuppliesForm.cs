@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sklad_project_app.Models;
-using Sklad_project_app.Import;
 using Newtonsoft.Json;
 using Sklad_project_app;
+using Sklad_project_app.Import;
+using Sklad_project_app.Models;
+using Sklad_project_app.Сurrency;
 
 
 namespace Sklad_project_app
@@ -80,7 +81,7 @@ namespace Sklad_project_app
             }
         }
 
-        private void LoadSupplies()
+        public void LoadSupplies()
         {
             using (var db = new SkladContext())
             {
@@ -212,7 +213,7 @@ namespace Sklad_project_app
                         productName,
                         categoryName,
                         supply.Quantity,
-                        supply.PurchasePrice.ToString("0.00"),
+                        CurrencyHelp.Format(supply.PurchasePrice),
                         supplyDate,
                         supply.SuppliesId,
                         supply.ProductId,
@@ -361,7 +362,9 @@ namespace Sklad_project_app
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var settingsForm = new CurrencyForm();
+            settingsForm.ShowDialog();
+            this.Close();
         }
 
         private void btnAddComing_Click(object sender, EventArgs e)
@@ -433,6 +436,8 @@ namespace Sklad_project_app
                                     return;
                                 }
 
+                                
+
                                 //приход
                                 var supply = new Supplies
                                 {
@@ -500,6 +505,16 @@ namespace Sklad_project_app
                 return;
             }
 
+            decimal priceInRub;
+            if (CurrencyHelp.GetCurrentCurrency() != "RUB")
+            {
+                priceInRub = price * CurrencyHelp.GetCurrentRate();
+            }
+            else
+            {
+                priceInRub = price;
+            }
+
             using (var db = new SkladContext())
             {
                 if (cmbProduct.SelectedItem == null)
@@ -532,7 +547,7 @@ namespace Sklad_project_app
                     SuppliesId = supply.Id,
                     ProductId = product.Id,
                     Quantity = quantity,
-                    PurchasePrice = price,
+                    PurchasePrice = priceInRub,
                 };
                 db.SuppliesItems.Add(supplyItem);
 
@@ -548,7 +563,7 @@ namespace Sklad_project_app
                         Id = Guid.NewGuid(),
                         ProductId = product.Id,
                         Rest = quantity,
-                        PurchasePrice = price
+                        PurchasePrice = priceInRub
                     };
                     db.Stocks.Add(stock);
                 }
