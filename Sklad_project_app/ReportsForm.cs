@@ -96,14 +96,6 @@ namespace Sklad_project_app
                 decimal.TryParse(txtProfitFrom.Text, out profitFrom);
                 decimal.TryParse(txtProfitTo.Text, out profitTo);
 
-                if (profitFrom < 0 || profitTo < 0)
-                {
-                    MessageBox.Show("Прибыль не может быть отрицательной", "Ошибка",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    if (profitFrom < 0) profitFrom = 0;
-                    if (profitTo < 0) profitTo = 1000000;
-                }
-
                 if (profitFrom > profitTo)
                 {
                     (profitFrom, profitTo) = (profitTo, profitFrom);

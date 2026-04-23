@@ -191,6 +191,7 @@ namespace Sklad_project_app
                 dgvProducts.Columns.Add("colCategory", "Категория");
                 dgvProducts.Columns.Add("colQuantity", "Количество");
                 dgvProducts.Columns.Add("colPrice", "Цена закупки");
+                dgvProducts.Columns.Add("colExpiryDate", "Годен до");
                 dgvProducts.Columns.Add("colDate", "Дата поставки");
                 dgvProducts.Columns.Add("colSupplyId", "SupplyId");
                 dgvProducts.Columns.Add("colProductId", "ProductId");
@@ -207,6 +208,11 @@ namespace Sklad_project_app
                     var categoryName = supply.Product.Category?.Name ?? "—";
                     var article = supply.Product.Article ?? "—";
                     var supplyDate = supply.Supplies.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
+                    var expiryDate = db.StockBatches
+                        .Where(b => b.SuppliesId == supply.SuppliesId && b.ProductId == supply.ProductId)
+                        .Select(b => b.ExpiryDate)
+                        .FirstOrDefault();
+                    var expiryDateStr = expiryDate?.ToString("dd.MM.yyyy") ?? "—";
 
                     dgvProducts.Rows.Add(
                         article,
@@ -214,6 +220,7 @@ namespace Sklad_project_app
                         categoryName,
                         supply.Quantity,
                         CurrencyHelp.Format(supply.PurchasePrice),
+                        expiryDateStr,
                         supplyDate,
                         supply.SuppliesId,
                         supply.ProductId,
@@ -238,6 +245,7 @@ namespace Sklad_project_app
             string price = "";
             string quantity = "";
             string date = "";
+            string expiryDate = "";
 
             if (dgvProducts.Columns.Contains("colArticle"))
                 article = selectedRow.Cells["colArticle"].Value.ToString();
@@ -257,22 +265,29 @@ namespace Sklad_project_app
             if (dgvProducts.Columns.Contains("colDate"))
                 date = selectedRow.Cells["colDate"].Value.ToString();
 
+            if (dgvProducts.Columns.Contains("colExpiryDate"))
+                expiryDate = selectedRow.Cells["colExpiryDate"].Value.ToString();
+
             txtArticleView.Text = article;
             txtNameView.Text = productName;
             txtCategoryView.Text = category;
             txtPriceView.Text = price;
             txtRestView.Text = quantity;
             txtDateView.Text = date;
+            txtExpirationDate.Text = expiryDate;
 
             txtArticleView.ReadOnly = true;
             txtNameView.ReadOnly = true;
             txtCategoryView.ReadOnly = true;
             txtPriceView.ReadOnly = true;
             txtRestView.ReadOnly = true;
+            txtExpirationDate.ReadOnly = true;
 
             btnSave.Visible = false;
             dtpDate.Visible = false;
             cmbProduct.Visible = false;
+            txtExpirationDate.Visible = true;
+            lblExpirationDate.Text = "Годен до:";
 
             lblPanelTitle.Text = "Просмотр";
             panelView.Visible = true;
@@ -380,6 +395,11 @@ namespace Sklad_project_app
             btnSave.Visible = true;
             cmbProduct.Visible = true;
 
+            txtExpirationDate.Visible = true;
+            txtExpirationDate.ReadOnly = false;
+            txtExpirationDate.Text = "";
+            lblExpirationDate.Visible = true;
+
             panelView.Visible = true;
             panelView.BringToFront();
             lblPanelTitle.Text = "Добавление";
@@ -436,7 +456,7 @@ namespace Sklad_project_app
                                     return;
                                 }
 
-                                
+
 
                                 //приход
                                 var supply = new Supplies
@@ -515,6 +535,21 @@ namespace Sklad_project_app
                 priceInRub = price;
             }
 
+            if (string.IsNullOrWhiteSpace(txtExpirationDate.Text))
+            {
+                MessageBox.Show("Введите срок годности (количество дней)", "Ошибка");
+                return;
+            }
+
+            if (!int.TryParse(txtExpirationDate.Text, out int days) || days <= 0)
+            {
+                MessageBox.Show("Введите корректное количество дней (целое число больше 0)", "Ошибка");
+                return;
+            }
+
+            DateTime expiryDate = dtpDate.Value.Date.AddDays(days).ToUniversalTime();
+            int totalDays = days;
+
             using (var db = new SkladContext())
             {
                 if (cmbProduct.SelectedItem == null)
@@ -551,6 +586,19 @@ namespace Sklad_project_app
                 };
                 db.SuppliesItems.Add(supplyItem);
 
+                var stockBatch = new StockBatch
+                {
+                    Id = Guid.NewGuid(),
+                    ProductId = product.Id,
+                    SuppliesId = supply.Id,
+                    Quantity = quantity,
+                    PurchasePrice = priceInRub,
+                    ExpiryDate = expiryDate,
+                    TotalDays = totalDays,
+                    DiscountPercent = 0,
+                    IsWrittenOff = false
+                };
+                db.StockBatches.Add(stockBatch);
                 var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
                 if (stock != null)
                 {
@@ -602,12 +650,17 @@ namespace Sklad_project_app
 
         private void txtPriceFrom_TextChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void txtPriceTo_TextChanged(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void txtExpirationDate_TextChanged(object sender, EventArgs e)
+        {
+           
         }
     }
 

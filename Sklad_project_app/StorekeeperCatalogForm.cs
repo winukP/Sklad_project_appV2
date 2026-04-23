@@ -367,7 +367,8 @@ namespace Sklad_project_app
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -379,6 +380,12 @@ namespace Sklad_project_app
         private void txtPriceFrom_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
         }
     }
 }

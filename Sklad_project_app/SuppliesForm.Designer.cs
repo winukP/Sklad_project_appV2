@@ -45,6 +45,8 @@
             btnReset = new Button();
             dgvProducts = new DataGridView();
             panelView = new Panel();
+            lblExpirationDate = new Label();
+            txtExpirationDate = new TextBox();
             lblArticleEdit = new Label();
             cmbProduct = new ComboBox();
             txtArticleView = new TextBox();
@@ -127,7 +129,7 @@
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnShipment);
             panelLeft.Controls.Add(btnMyShipments);
-            panelLeft.Location = new Point(0, 35);
+            panelLeft.Location = new Point(237, 223);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
@@ -425,6 +427,8 @@
             // panelView
             // 
             panelView.BackColor = Color.FromArgb(50, 50, 50);
+            panelView.Controls.Add(lblExpirationDate);
+            panelView.Controls.Add(txtExpirationDate);
             panelView.Controls.Add(lblArticleEdit);
             panelView.Controls.Add(cmbProduct);
             panelView.Controls.Add(txtArticleView);
@@ -447,6 +451,29 @@
             panelView.Size = new Size(140, 445);
             panelView.TabIndex = 4;
             panelView.Visible = false;
+            // 
+            // lblExpirationDate
+            // 
+            lblExpirationDate.AutoSize = true;
+            lblExpirationDate.Font = new Font("Arial", 8F);
+            lblExpirationDate.ForeColor = Color.White;
+            lblExpirationDate.Location = new Point(5, 306);
+            lblExpirationDate.Name = "lblExpirationDate";
+            lblExpirationDate.Size = new Size(106, 16);
+            lblExpirationDate.TabIndex = 15;
+            lblExpirationDate.Text = "Срок годности:";
+            // 
+            // txtExpirationDate
+            // 
+            txtExpirationDate.BackColor = Color.FromArgb(80, 80, 80);
+            txtExpirationDate.BorderStyle = BorderStyle.FixedSingle;
+            txtExpirationDate.ForeColor = Color.White;
+            txtExpirationDate.Location = new Point(6, 322);
+            txtExpirationDate.Name = "txtExpirationDate";
+            txtExpirationDate.ReadOnly = true;
+            txtExpirationDate.Size = new Size(130, 27);
+            txtExpirationDate.TabIndex = 16;
+            txtExpirationDate.TextChanged += txtExpirationDate_TextChanged;
             // 
             // lblArticleEdit
             // 
@@ -483,7 +510,7 @@
             btnSave.BackColor = Color.FromArgb(80, 80, 80);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(5, 351);
+            btnSave.Location = new Point(5, 399);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(130, 28);
             btnSave.TabIndex = 14;
@@ -625,7 +652,7 @@
             btnCloseView.BackColor = Color.FromArgb(80, 80, 80);
             btnCloseView.FlatStyle = FlatStyle.Flat;
             btnCloseView.ForeColor = Color.White;
-            btnCloseView.Location = new Point(5, 315);
+            btnCloseView.Location = new Point(5, 363);
             btnCloseView.Name = "btnCloseView";
             btnCloseView.Size = new Size(130, 28);
             btnCloseView.TabIndex = 13;
@@ -707,5 +734,7 @@
         private ComboBox cmbProduct;
         private TextBox txtArticleView;
         private Label lblArticleEdit;
+        private Label lblExpirationDate;
+        private TextBox txtExpirationDate;
     }
 }
