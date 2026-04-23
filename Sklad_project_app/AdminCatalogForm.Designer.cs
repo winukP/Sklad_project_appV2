@@ -13,7 +13,7 @@ namespace Sklad_project_app
             base.Dispose(disposing);
         }
 
-        private void InitializeComponent()
+        internal void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
@@ -647,7 +647,7 @@ namespace Sklad_project_app
             ResumeLayout(false);
         }
 
-        private System.Windows.Forms.Panel panelTop;
+        internal System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Label lblCompany;
         private System.Windows.Forms.Label lblUserInfo;
         private System.Windows.Forms.Button btnLogout;
@@ -663,31 +663,31 @@ namespace Sklad_project_app
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Panel panelFilters;
         private System.Windows.Forms.Label lblSearch;
-        private System.Windows.Forms.TextBox txtSearch;
+        internal System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Label lblCategory;
-        private System.Windows.Forms.ComboBox cmbCategory;
+        internal System.Windows.Forms.ComboBox cmbCategory;
         private System.Windows.Forms.Label lblAvailability;
-        private System.Windows.Forms.ComboBox cmbAvailability;
+        internal System.Windows.Forms.ComboBox cmbAvailability;
         private System.Windows.Forms.Label lblPrice;
-        private System.Windows.Forms.TextBox txtPriceFrom;
-        private System.Windows.Forms.TextBox txtPriceTo;
+        internal System.Windows.Forms.TextBox txtPriceFrom;
+        internal System.Windows.Forms.TextBox txtPriceTo;
         private System.Windows.Forms.Label lblFound;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.DataGridView dgvProducts;
+        internal System.Windows.Forms.DataGridView dgvProducts;
         private System.Windows.Forms.Panel panelEdit;
         private System.Windows.Forms.Label lblPanelTitle;
         private System.Windows.Forms.Label lblArticleEdit;
-        private System.Windows.Forms.TextBox txtArticleEdit;
+        internal System.Windows.Forms.TextBox txtArticleEdit;
         private System.Windows.Forms.Label lblNameEdit;
-        private System.Windows.Forms.TextBox txtNameEdit;
+        internal System.Windows.Forms.TextBox txtNameEdit;
         private System.Windows.Forms.Label lblCategoryEdit;
-        private System.Windows.Forms.ComboBox cmbCategoryEdit;
+        internal System.Windows.Forms.ComboBox cmbCategoryEdit;
         private System.Windows.Forms.Label lblUnitEdit;
-        private System.Windows.Forms.ComboBox cmbUnitEdit;
+        internal System.Windows.Forms.ComboBox cmbUnitEdit;
         private System.Windows.Forms.Label lblPriceEdit;
-        private System.Windows.Forms.TextBox txtPriceEdit;
+        internal System.Windows.Forms.TextBox txtPriceEdit;
         private System.Windows.Forms.Label lblRestEdit;
-        private System.Windows.Forms.TextBox txtRestEdit;
+        internal System.Windows.Forms.TextBox txtRestEdit;
         private System.Windows.Forms.Button btnCancelEdit;
         private System.Windows.Forms.Button btnSaveEdit;
         private Button btnSuplies;
