@@ -48,161 +48,186 @@ namespace Sklad_project_app
 
         public void LoadProducts()
         {
-            using (var db = new SkladContext())
+            try
             {
-                var allProducts = db.Products
-                    .Include("Category")
-                    .Include("Unit")
-                    .Include("Stock")
-                    .ToList();
-
-                int totalCount = allProducts.Count;
-
-                var searchText = txtSearch.Text.Trim().ToLower();
-                var afterSearch = new List<Product>();
-
-                if (string.IsNullOrEmpty(searchText))
+                using (var db = new SkladContext())
                 {
-                    afterSearch = allProducts;
-                }
-                else
-                {
-                    foreach (var product in allProducts)
+                    var allProducts = db.Products
+                        .Include("Category")
+                        .Include("Unit")
+                        .Include("Stock")
+                        .ToList();
+
+                    int totalCount = allProducts.Count;
+
+                    var searchText = txtSearch.Text.Trim().ToLower();
+                    var afterSearch = new List<Product>();
+
+                    if (string.IsNullOrEmpty(searchText))
                     {
-                        var productName = "";
-                        var productArticle = "";
-
-                        if (product.Name != null)
-                        {
-                            productName = product.Name.ToLower();
-                        }
-                        if (product.Article != null)
-                        {
-                            productArticle = product.Article.ToLower();
-                        }
-
-                        if (productName.Contains(searchText) || productArticle.Contains(searchText))
-                        {
-                            afterSearch.Add(product);
-                        }
+                        afterSearch = allProducts;
                     }
-                }
-
-                var afterCategory = new List<Product>();
-
-                if (cmbCategory.SelectedIndex <= 0)
-                {
-                    afterCategory = afterSearch;
-                }
-                else
-                {
-                    var selectedCategoryName = cmbCategory.SelectedItem.ToString();
-                    foreach (var product in afterSearch)
+                    else
                     {
-                        if (product.Category != null && product.Category.Name == selectedCategoryName)
+                        foreach (var product in allProducts)
                         {
-                            afterCategory.Add(product);
+                            var productName = "";
+                            var productArticle = "";
+
+                            if (product.Name != null)
+                            {
+                                productName = product.Name.ToLower();
+                            }
+                            if (product.Article != null)
+                            {
+                                productArticle = product.Article.ToLower();
+                            }
+
+                            if (productName.Contains(searchText) || productArticle.Contains(searchText))
+                            {
+                                afterSearch.Add(product);
+                            }
                         }
                     }
-                }
 
-                var afterAvailability = new List<Product>();
+                    var afterCategory = new List<Product>();
 
-                if (cmbAvailability.SelectedIndex == 1)
-                {
-                    foreach (var product in afterCategory)
+                    if (cmbCategory.SelectedIndex <= 0)
                     {
-                        if (product.Stock != null && product.Stock.Rest > 0)
+                        afterCategory = afterSearch;
+                    }
+                    else
+                    {
+                        var selectedCategoryName = cmbCategory.SelectedItem.ToString();
+                        foreach (var product in afterSearch)
                         {
-                            afterAvailability.Add(product);
+                            if (product.Category != null && product.Category.Name == selectedCategoryName)
+                            {
+                                afterCategory.Add(product);
+                            }
+                        }
+                    }
+
+                    var afterAvailability = new List<Product>();
+
+                    if (cmbAvailability.SelectedIndex == 1)
+                    {
+                        foreach (var product in afterCategory)
+                        {
+                            if (product.Stock != null && product.Stock.Rest > 0)
+                            {
+                                afterAvailability.Add(product);
+                            }
+                        }
+                    }
+                    else if (cmbAvailability.SelectedIndex == 2)
+                    {
+                        foreach (var product in afterCategory)
+                        {
+                            if (product.Stock == null || product.Stock.Rest == 0)
+                            {
+                                afterAvailability.Add(product);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        afterAvailability = afterCategory;
+                    }
+
+                    decimal priceFrom = 0;
+                    decimal priceTo = 1000000;
+                    decimal.TryParse(txtPriceFrom.Text, out priceFrom);
+                    decimal.TryParse(txtPriceTo.Text, out priceTo);
+
+                    if (priceFrom < 0 || priceTo < 0)
+                    {
+                        MessageBox.Show(AppResources.MsgNegativePrice, AppResources.MsgInputError,
+                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        if (priceFrom < 0)
+                        {
+                            priceFrom = 0;
+                        }
+                        if (priceTo < 0)
+                        {
+                            priceTo = 100000;
+                        }
+                    }
+
+                    var afterPrice = new List<Product>();
+                    foreach (var product in afterAvailability)
+                    {
+                        if (product.Stock != null &&
+                            product.Stock.PurchasePrice >= priceFrom &&
+                            product.Stock.PurchasePrice <= priceTo)
+                        {
+                            afterPrice.Add(product);
+                        }
+                    }
+
+                    lblFound.Text = AppResources.LblFoundFormat + afterPrice.Count
+                        + " " + AppResources.LblFoundOf + " " + totalCount;
+
+                    dgvProducts.Rows.Clear();
+                    dgvProducts.Columns.Clear();
+                    dgvProducts.Columns.Add("colArticle", AppResources.ColArticle);
+                    dgvProducts.Columns.Add("colName", AppResources.ColName);
+                    dgvProducts.Columns.Add("colCategory", AppResources.ColCategory);
+                    dgvProducts.Columns.Add("colUnit", AppResources.ColUnit);
+                    dgvProducts.Columns.Add("colPrice", AppResources.ColPrice);
+                    dgvProducts.Columns.Add("colRest", AppResources.ColRest);
+                    dgvProducts.Columns.Add("colDiscount", "Скидка");
+                    dgvProducts.Columns.Add("colId", "ID");
+                    dgvProducts.Columns["colId"].Visible = false;
+
+                    foreach (var product in afterPrice)
+                    {
+                        var price = "—";
+                        var rest = "—";
+                        var categoryName = "";
+                        var unitName = "";
+                        var hasDiscount = "Нет";
+
+                        if (product.Stock != null)
+                        {
+                            var hasActiveDiscount = db.StockBatches
+                        .Any(b => b.ProductId == product.Id && !b.IsWrittenOff && b.Quantity > 0 && b.DiscountPercent > 0);
+                            hasDiscount = hasActiveDiscount ? "Да" : "Нет";
+                            price = CurrencyHelp.Format(product.Stock.PurchasePrice);
+                            rest = product.Stock.Rest.ToString();
+                        }
+
+                        if (product.Category != null)
+                        {
+                            categoryName = product.Category.Name;
+                        }
+                        if (product.Unit != null)
+                        {
+                            unitName = product.Unit.Name;
+                        }
+
+                        int rowIndex = dgvProducts.Rows.Add(product.Article, product.Name,
+                            categoryName, unitName, price, rest, hasDiscount, product.Id);
+
+                        if (hasDiscount == "Да")
+                        {
+                            dgvProducts.Rows[rowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
                         }
                     }
                 }
-                else if (cmbAvailability.SelectedIndex == 2)
-                {
-                    foreach (var product in afterCategory)
-                    {
-                        if (product.Stock == null || product.Stock.Rest == 0)
-                        {
-                            afterAvailability.Add(product);
-                        }
-                    }
-                }
-                else
-                {
-                    afterAvailability = afterCategory;
-                }
-
-                decimal priceFrom = 0;
-                decimal priceTo = 1000000;
-                decimal.TryParse(txtPriceFrom.Text, out priceFrom);
-                decimal.TryParse(txtPriceTo.Text, out priceTo);
-
-                if (priceFrom < 0 || priceTo < 0)
-                {
-                    MessageBox.Show(AppResources.MsgNegativePrice, AppResources.MsgInputError,
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    if (priceFrom < 0)
-                    {
-                        priceFrom = 0;
-                    }
-                    if (priceTo < 0)
-                    {
-                        priceTo = 100000;
-                    }
-                }
-
-                var afterPrice = new List<Product>();
-                foreach (var product in afterAvailability)
-                {
-                    if (product.Stock != null &&
-                        product.Stock.PurchasePrice >= priceFrom &&
-                        product.Stock.PurchasePrice <= priceTo)
-                    {
-                        afterPrice.Add(product);
-                    }
-                }
-
-                lblFound.Text = AppResources.LblFoundFormat + afterPrice.Count
-                    + " " + AppResources.LblFoundOf + " " + totalCount;
-
-                dgvProducts.Rows.Clear();
-                dgvProducts.Columns.Clear();
-                dgvProducts.Columns.Add("colArticle", AppResources.ColArticle);
-                dgvProducts.Columns.Add("colName", AppResources.ColName);
-                dgvProducts.Columns.Add("colCategory", AppResources.ColCategory);
-                dgvProducts.Columns.Add("colUnit", AppResources.ColUnit);
-                dgvProducts.Columns.Add("colPrice", AppResources.ColPrice);
-                dgvProducts.Columns.Add("colRest", AppResources.ColRest);
-                dgvProducts.Columns.Add("colId", "ID");
-                dgvProducts.Columns["colId"].Visible = false;
-
-                foreach (var product in afterPrice)
-                {
-                    var price = "—";
-                    var rest = "—";
-                    var categoryName = "";
-                    var unitName = "";
-
-                    if (product.Stock != null)
-                    {
-                        price = CurrencyHelp.Format(product.Stock.PurchasePrice);
-                        rest = product.Stock.Rest.ToString();
-                    }
-
-                    if (product.Category != null)
-                    {
-                        categoryName = product.Category.Name;
-                    }
-                    if (product.Unit != null)
-                    {
-                        unitName = product.Unit.Name;
-                    }
-
-                    dgvProducts.Rows.Add(product.Article, product.Name,
-                        categoryName, unitName, price, rest, product.Id);
-                }
+            }
+            //FATAL-04 — Потеря соединения с БД в процессе работы (все повторные попытки исчерпаны)
+            catch (Exception ex)
+            {
+                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                     $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                     $"Текущая операция: Загрузка каталога товаров\n" +
+                     $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                     $"Приложение будет завершено.", ex);
+                MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
+                    "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 

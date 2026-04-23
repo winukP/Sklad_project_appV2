@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sklad_project_app.Models;
 using Sklad_project_app;
+using Sklad_project_app.Models;
+using Sklad_project_app.Сurrency;
 
 namespace Sklad_project_app
 {
     public partial class ShipmentForm : Form
     {
-        private Dictionary<Guid, int> _shipmentItems = new Dictionary<Guid, int>();
+        private Dictionary<Guid, ShipmentItemInfo> _shipmentItems = new Dictionary<Guid, ShipmentItemInfo>();
 
         public ShipmentForm()
         {
@@ -43,180 +44,236 @@ namespace Sklad_project_app
             cmbAvailability.SelectedIndex = 0;
         }
 
-        private void LoadProducts()
+        public void LoadProducts()
         {
-            using (var db = new SkladContext())
+            try
             {
-                var allProducts = db.Products
-                    .Include("Category")
-                    .Include("Stock")
-                    .ToList();
-
-                var searchText = txtSearch.Text.Trim().ToLower();
-                var afterSearch = new List<Product>();
-
-                if (string.IsNullOrEmpty(searchText))
+                using (var db = new SkladContext())
                 {
-                    afterSearch = allProducts;
-                }
-                else
-                {
-                    foreach (var product in allProducts)
+                    var allProducts = db.Products
+                        .Include("Category")
+                        .Include("Stock")
+                        .ToList();
+
+                    var searchText = txtSearch.Text.Trim().ToLower();
+                    var afterSearch = new List<Product>();
+
+                    if (string.IsNullOrEmpty(searchText))
                     {
-                        var productName = "";
-                        var productArticle = "";
-
-                        if (product.Name != null)
-                        {
-                            productName = product.Name.ToLower();
-                        }
-                        if (product.Article != null)
-                        {
-                            productArticle = product.Article.ToLower();
-                        }
-
-                        if (productName.Contains(searchText) || productArticle.Contains(searchText))
-                        {
-                            afterSearch.Add(product);
-                        }
+                        afterSearch = allProducts;
                     }
-                }
-
-                var afterCategory = new List<Product>();
-                if (cmbCategory.SelectedIndex <= 0)
-                {
-                    afterCategory = afterSearch;
-                }
-                else
-                {
-                    var selectedCategoryName = cmbCategory.SelectedItem.ToString();
-                    foreach (var product in afterSearch)
+                    else
                     {
-                        if (product.Category != null && product.Category.Name == selectedCategoryName)
+                        foreach (var product in allProducts)
                         {
-                            afterCategory.Add(product);
+                            var productName = "";
+                            var productArticle = "";
+
+                            if (product.Name != null)
+                            {
+                                productName = product.Name.ToLower();
+                            }
+                            if (product.Article != null)
+                            {
+                                productArticle = product.Article.ToLower();
+                            }
+
+                            if (productName.Contains(searchText) || productArticle.Contains(searchText))
+                            {
+                                afterSearch.Add(product);
+                            }
                         }
                     }
-                }
 
-                var afterAvailability = new List<Product>();
-                if (cmbAvailability.SelectedIndex == 1)
-                {
-                    foreach (var product in afterCategory)
+                    var afterCategory = new List<Product>();
+                    if (cmbCategory.SelectedIndex <= 0)
                     {
-                        if (product.Stock != null && product.Stock.Rest > 0)
+                        afterCategory = afterSearch;
+                    }
+                    else
+                    {
+                        var selectedCategoryName = cmbCategory.SelectedItem.ToString();
+                        foreach (var product in afterSearch)
                         {
-                            afterAvailability.Add(product);
+                            if (product.Category != null && product.Category.Name == selectedCategoryName)
+                            {
+                                afterCategory.Add(product);
+                            }
                         }
                     }
-                }
-                else if (cmbAvailability.SelectedIndex == 2)
-                {
-                    foreach (var product in afterCategory)
+
+                    var afterAvailability = new List<Product>();
+                    if (cmbAvailability.SelectedIndex == 1)
                     {
-                        if (product.Stock == null || product.Stock.Rest == 0)
+                        foreach (var product in afterCategory)
                         {
-                            afterAvailability.Add(product);
+                            if (product.Stock != null && product.Stock.Rest > 0)
+                            {
+                                afterAvailability.Add(product);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    afterAvailability = afterCategory;
-                }
-
-                dgvShipment.Rows.Clear();
-                dgvShipment.Columns.Clear();
-
-                dgvShipment.Columns.Add("colArticle", AppResources.ColArticle);
-                dgvShipment.Columns.Add("colName", AppResources.ColName);
-                dgvShipment.Columns.Add("colCategory", AppResources.ColCategory);
-                dgvShipment.Columns.Add("colPrice", AppResources.ColPrice);
-                dgvShipment.Columns.Add("colRest", AppResources.ColRest);
-
-                var btnMinus = new DataGridViewButtonColumn();
-                btnMinus.Name = "colMinus";
-                btnMinus.HeaderText = "";
-                btnMinus.Text = "-";
-                btnMinus.UseColumnTextForButtonValue = true;
-                dgvShipment.Columns.Add(btnMinus);
-
-                dgvShipment.Columns.Add("colQty", "Взято");
-
-                var btnPlus = new DataGridViewButtonColumn();
-                btnPlus.Name = "colPlus";
-                btnPlus.HeaderText = "";
-                btnPlus.Text = "+";
-                btnPlus.UseColumnTextForButtonValue = true;
-                dgvShipment.Columns.Add(btnPlus);
-
-                dgvShipment.Columns.Add("colId", "ID");
-                dgvShipment.Columns["colId"].Visible = false;
-
-                foreach (var product in afterAvailability)
-                {
-                    var price = "—";
-                    var rest = "0";
-                    var categoryName = "";
-
-                    if (product.Stock != null)
+                    else if (cmbAvailability.SelectedIndex == 2)
                     {
-                        price = product.Stock.PurchasePrice.ToString("0") + " руб.";
-                        rest = product.Stock.Rest.ToString();
+                        foreach (var product in afterCategory)
+                        {
+                            if (product.Stock == null || product.Stock.Rest == 0)
+                            {
+                                afterAvailability.Add(product);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        afterAvailability = afterCategory;
                     }
 
-                    if (product.Category != null)
+                    dgvShipment.Rows.Clear();
+                    dgvShipment.Columns.Clear();
+
+                    dgvShipment.Columns.Add("colArticle", AppResources.ColArticle);
+                    dgvShipment.Columns.Add("colName", AppResources.ColName);
+                    dgvShipment.Columns.Add("colCategory", AppResources.ColCategory);
+                    dgvShipment.Columns.Add("colPrice", "Цена");
+                    dgvShipment.Columns.Add("colDiscount", "Скидка");
+                    dgvShipment.Columns.Add("colRest", AppResources.ColRest);
+
+                    var btnMinus = new DataGridViewButtonColumn();
+                    btnMinus.Name = "colMinus";
+                    btnMinus.HeaderText = "";
+                    btnMinus.Text = "-";
+                    btnMinus.UseColumnTextForButtonValue = true;
+                    dgvShipment.Columns.Add(btnMinus);
+
+                    dgvShipment.Columns.Add("colQty", "Взято");
+
+                    var btnPlus = new DataGridViewButtonColumn();
+                    btnPlus.Name = "colPlus";
+                    btnPlus.HeaderText = "";
+                    btnPlus.Text = "+";
+                    btnPlus.UseColumnTextForButtonValue = true;
+                    dgvShipment.Columns.Add(btnPlus);
+
+                    dgvShipment.Columns.Add("colId", "ID");
+                    dgvShipment.Columns["colId"].Visible = false;
+
+                    foreach (var product in afterAvailability)
                     {
-                        categoryName = product.Category.Name;
+                        var price = "—";
+                        var discount = "Нет";
+                        var rest = "0";
+                        var categoryName = "";
+
+                        if (product.Stock != null)
+                        {
+                            // Получаем максимальную скидку для товара
+                            var maxDiscount = db.StockBatches
+                                .Where(b => b.ProductId == product.Id && !b.IsWrittenOff && b.Quantity > 0)
+                                .OrderByDescending(b => b.DiscountPercent)
+                                .Select(b => b.DiscountPercent)
+                                .FirstOrDefault();
+
+                            decimal originalPrice = product.Stock.PurchasePrice;
+
+                            if (maxDiscount > 0)
+                            {
+                                decimal discountedPrice = originalPrice * (1 - maxDiscount / 100);
+                                price = $"{CurrencyHelp.Format(originalPrice)} → {CurrencyHelp.Format(discountedPrice)}";
+                                discount = $"{maxDiscount}%";
+                            }
+                            else
+                            {
+                                price = CurrencyHelp.Format(originalPrice);
+                                discount = "Нет";
+                            }
+
+                            rest = product.Stock.Rest.ToString();
+                        }
+
+                        if (product.Category != null)
+                        {
+                            categoryName = product.Category.Name;
+                        }
+
+                        int qty = 0;
+                        if (_shipmentItems.ContainsKey(product.Id))
+                        {
+                            qty = _shipmentItems[product.Id].Quantity;
+                        }
+
+                        int rowIndex = dgvShipment.Rows.Add(
+                            product.Article,
+                            product.Name,
+                            categoryName,
+                            price,
+                            discount,
+                            rest,
+                            "-",
+                            qty.ToString(),
+                            "+",
+                            product.Id
+                        );
+
+                        if (discount != "Нет")
+                        {
+                            dgvShipment.Rows[rowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
+                        }
                     }
 
-                    int qty = 0;
-                    if (_shipmentItems.ContainsKey(product.Id))
-                    {
-                        qty = _shipmentItems[product.Id];
-                    }
-
-                    dgvShipment.Rows.Add(product.Article, product.Name,
-                        categoryName, price, rest, "-", qty.ToString(), "+", product.Id);
+                    UpdateTotal();
                 }
-
-                UpdateTotal();
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                             $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                             $"Текущая операция: Загрузка каталога товаров\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                             $"Приложение будет завершено.", ex);
+                MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
+                    "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 
         private void dgvShipment_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
-            {
-                return;
-            }
+            if (e.RowIndex < 0) return;
 
             var idValue = dgvShipment.Rows[e.RowIndex].Cells["colId"].Value?.ToString();
-            Guid productId;
-            if (!Guid.TryParse(idValue, out productId))
-            {
-                return;
-            }
+            if (!Guid.TryParse(idValue, out Guid productId)) return;
 
-            int rest;
-            if (!int.TryParse(dgvShipment.Rows[e.RowIndex].Cells["colRest"].Value?.ToString(), out rest))
-            {
-                rest = 0;
-            }
-
-            int currentQty = 0;
-            if (_shipmentItems.ContainsKey(productId))
-            {
-                currentQty = _shipmentItems[productId];
-            }
+            int rest = int.TryParse(dgvShipment.Rows[e.RowIndex].Cells["colRest"].Value?.ToString(), out int r) ? r : 0;
+            int currentQty = _shipmentItems.ContainsKey(productId) ? _shipmentItems[productId].Quantity : 0;
+            string productName = dgvShipment.Rows[e.RowIndex].Cells["colName"].Value?.ToString();
 
             if (e.ColumnIndex == dgvShipment.Columns["colPlus"].Index)
             {
                 if (currentQty < rest)
                 {
-                    _shipmentItems[productId] = currentQty + 1;
-                    dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value =
-                        _shipmentItems[productId].ToString();
+                    int newQty = currentQty + 1;
+
+                    try
+                    {
+                        var batches = GetBatchesForShipment(productId, newQty);
+                        decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
+
+                        // ПРАВИЛЬНО: создаём объект ShipmentItemInfo
+                        _shipmentItems[productId] = new ShipmentItemInfo
+                        {
+                            ProductId = productId,
+                            ProductName = productName,
+                            Quantity = newQty,
+                            TotalPrice = totalPrice,
+                            Batches = batches
+                        };
+
+                        dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
                 else
                 {
@@ -227,9 +284,29 @@ namespace Sklad_project_app
             {
                 if (currentQty > 0)
                 {
-                    _shipmentItems[productId] = currentQty - 1;
-                    dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value =
-                        _shipmentItems[productId].ToString();
+                    int newQty = currentQty - 1;
+
+                    if (newQty == 0)
+                    {
+                        _shipmentItems.Remove(productId);
+                    }
+                    else
+                    {
+                        var batches = GetBatchesForShipment(productId, newQty);
+                        decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
+
+                        // ПРАВИЛЬНО: создаём объект ShipmentItemInfo
+                        _shipmentItems[productId] = new ShipmentItemInfo
+                        {
+                            ProductId = productId,
+                            ProductName = productName,
+                            Quantity = newQty,
+                            TotalPrice = totalPrice,
+                            Batches = batches
+                        };
+                    }
+
+                    dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
                 }
             }
 
@@ -238,12 +315,10 @@ namespace Sklad_project_app
 
         private void UpdateTotal()
         {
-            int total = 0;
-            foreach (var item in _shipmentItems)
-            {
-                total += item.Value;
-            }
-            lblTotal.Text = AppResources.LblTotalItems + "\n" + total.ToString();
+            int total = _shipmentItems.Values.Sum(i => i.Quantity);
+            decimal totalAmount = _shipmentItems.Values.Sum(i => i.TotalPrice);
+
+            lblTotal.Text = $"{AppResources.LblTotalItems}\n{total} шт.\nСумма: {CurrencyHelp.Format(totalAmount)}";
         }
 
         private void btnSubmit_Click(object sender, EventArgs e)
@@ -255,16 +330,7 @@ namespace Sklad_project_app
                 return;
             }
 
-            var itemsToShip = new Dictionary<Guid, int>();
-            foreach (var item in _shipmentItems)
-            {
-                if (item.Value > 0)
-                {
-                    itemsToShip.Add(item.Key, item.Value);
-                }
-            }
-
-            if (itemsToShip.Count == 0)
+            if (_shipmentItems.Count == 0)
             {
                 MessageBox.Show(AppResources.MsgNoItems);
                 return;
@@ -272,106 +338,134 @@ namespace Sklad_project_app
 
             using (var db = new SkladContext())
             {
-                foreach (var item in itemsToShip)
+                try
                 {
-                    var foundStock = db.Stocks
-                        .Where(stock => stock.ProductId == item.Key)
-                        .FirstOrDefault();
-
-                    if (foundStock == null || foundStock.Rest < item.Value)
+                    decimal totalAmount = 0;
+                    // Проверка остатков
+                    foreach (var item in _shipmentItems.Values)
                     {
-                        var foundProduct = db.Products.Find(item.Key);
-                        var productName = "";
-                        if (foundProduct != null)
+                        // Получаем актуальный остаток из БД
+                        var available = db.StockBatches
+                            .Where(b => b.ProductId == item.ProductId && !b.IsWrittenOff && b.Quantity > 0)
+                            .Sum(b => b.Quantity);
+
+                        if (available < item.Quantity)
                         {
-                            productName = foundProduct.Name;
+                            // WARN-09: Финальная проверка остатков перед отгрузкой не пройдена
+                            Logger.Warn($"WARN-09: Финальная проверка остатков перед отгрузкой не пройдена.\n" +
+                                        $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                        $"ProductId: {item.ProductId} | Товар: {item.ProductName}\n" +
+                                        $"Запрошено: {item.Quantity} | Актуальный остаток: {available}\n" +
+                                        $"Отгрузка не создана.");
+                            MessageBox.Show($"Недостаточно товара: {item.ProductName}\n" +
+                                           $"Доступно: {available} шт., запрошено: {item.Quantity} шт.");
+                            return;
                         }
-                        MessageBox.Show(AppResources.MsgNotEnough + " " + productName);
-                        return;
                     }
-                }
 
-                var foundClient = db.Clients
-                    .Where(client => client.Name == clientName)
-                    .FirstOrDefault();
-
-                if (foundClient == null)
-                {
-                    foundClient = new Client
+                    // Создаём клиента
+                    var foundClient = db.Clients.FirstOrDefault(c => c.Name == clientName);
+                    if (foundClient == null)
                     {
-                        Id = Guid.NewGuid(),
-                        Name = clientName
-                    };
-                    db.Clients.Add(foundClient);
-
-                    try
-                    {
+                        foundClient = new Client { Id = Guid.NewGuid(), Name = clientName };
+                        db.Clients.Add(foundClient);
                         db.SaveChanges();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(AppResources.MsgSaveError + ex.Message);
-                        return;
-                    }
-                }
 
-                var newShipment = new Shipment
-                {
-                    Id = Guid.NewGuid(),
-                    ClientId = foundClient.Id,
-                    UserId = CurrentUser.User.Id,
-                    ShipmentDate = dtpDate.Value.ToUniversalTime()
-                };
-                db.Shipments.Add(newShipment);
-
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(AppResources.MsgSaveError + ex.Message);
-                    return;
-                }
-
-                foreach (var item in itemsToShip)
-                {
-                    var stock = db.Stocks.FirstOrDefault(s => s.ProductId == item.Key);
-                    decimal price = stock?.PurchasePrice ?? 0;
-                    decimal amount = price * item.Value;
-                    db.ShipmentItems.Add(new ShipmentItem
+                    // Создаём отгрузку
+                    var newShipment = new Shipment
                     {
                         Id = Guid.NewGuid(),
-                        ShipmentId = newShipment.Id,
-                        ProductId = item.Key,
-                        Quantity = item.Value,
-                        Amount = amount
-                    });
+                        ClientId = foundClient.Id,
+                        UserId = CurrentUser.User.Id,
+                        ShipmentDate = dtpDate.Value.ToUniversalTime()
+                    };
+                    db.Shipments.Add(newShipment);
+                    db.SaveChanges();
 
-                    var foundStock = db.Stocks
-                        .Where(stock => stock.ProductId == item.Key)
-                        .FirstOrDefault();
+                    Logger.Debug($"DEBUG-06: Отгрузка успешно создана.\n" +
+                         $"Пользователь: {CurrentUser.User?.Login}\n" +
+                         $"ShipmentId: {newShipment.Id} | Клиент: {clientName}\n" +
+                         $"Дата: {dtpDate.Value:dd.MM.yyyy}\n" +
+                         $"Позиций: {_shipmentItems.Count} | Сумма: {totalAmount:F2} руб.\n" +
+                         $"Время: {DateTime.Now}");
 
-                    if (foundStock != null)
+                    // Сохраняем товары и списываем остатки
+                    foreach (var item in _shipmentItems.Values)
                     {
-                        foundStock.Rest -= item.Value;
-                    }
-                }
+                        foreach (var (batch, take) in item.Batches)
+                        {
+                            var currentBatch = db.StockBatches.Find(batch.Id);
+                            currentBatch.Quantity -= take;
 
-                try
-                {
+                            decimal priceWithDiscount = batch.PurchasePrice * (1 - batch.DiscountPercent / 100);
+
+                            db.ShipmentItems.Add(new ShipmentItem
+                            {
+                                Id = Guid.NewGuid(),
+                                ShipmentId = newShipment.Id,
+                                ProductId = item.ProductId,
+                                Quantity = take,
+                                Amount = priceWithDiscount * take
+                            });
+                        }
+
+                        // Обновляем общий остаток
+                        var stock = db.Stocks.FirstOrDefault(s => s.ProductId == item.ProductId);
+                        if (stock != null)
+                        {
+                            stock.Rest -= item.Quantity;
+                        }
+                    }
+
                     db.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(AppResources.MsgSaveError + ex.Message);
-                    return;
+                    Logger.Error($"ERROR-02: Не удалось сохранить отгрузку.\n" +
+                                 $"Пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                                 $"Клиент: {clientName} | Дата: {dtpDate.Value:dd.MM.yyyy}\n" +
+                                 $"Количество позиций: {_shipmentItems.Count}\n" +
+                                 $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                                 $"Стек: {ex.StackTrace}", ex);
+                    MessageBox.Show("Ошибка сохранения отгрузки", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
             MessageBox.Show(AppResources.MsgShipSuccess);
             _shipmentItems.Clear();
             this.Close();
+        }
+
+        private List<(StockBatch batch, int take)> GetBatchesForShipment(Guid productId, int quantity)
+        {
+            using (var db = new SkladContext())
+            {
+                var batches = db.StockBatches
+                    .Where(b => b.ProductId == productId && !b.IsWrittenOff && b.Quantity > 0)
+                    .OrderBy(b => b.ExpiryDate)
+                    .ToList();
+
+                var result = new List<(StockBatch batch, int take)>();
+                int remaining = quantity;
+
+                foreach (var batch in batches)
+                {
+                    if (remaining <= 0) break;
+
+                    int take = Math.Min(remaining, batch.Quantity);
+                    result.Add((batch, take));
+                    remaining -= take;
+                }
+
+                if (remaining > 0)
+                {
+                    throw new Exception($"Недостаточно товара. Не хватает {remaining} шт.");
+                }
+
+                return result;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -403,5 +497,105 @@ namespace Sklad_project_app
             LoadProducts();
         }
 
+        private void txtClientName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvShipment_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            var idValue = dgvShipment.Rows[e.RowIndex].Cells["colId"].Value?.ToString();
+            if (!Guid.TryParse(idValue, out Guid productId)) return;
+
+            //Получаем остаток
+            string restStr = dgvShipment.Rows[e.RowIndex].Cells["colRest"].Value?.ToString();
+            int rest = int.TryParse(restStr, out int r) ? r : 0;
+
+            string productName = dgvShipment.Rows[e.RowIndex].Cells["colName"].Value?.ToString();
+            string article = dgvShipment.Rows[e.RowIndex].Cells["colArticle"].Value?.ToString();
+
+            if (e.ColumnIndex == dgvShipment.Columns["colPlus"].Index)
+            {
+                //Получаем текущее количество
+                int currentQty = _shipmentItems.ContainsKey(productId) ? _shipmentItems[productId].Quantity : 0;
+                MessageBox.Show($"currentQty = {currentQty}, rest = {rest}");
+                if (currentQty + 1 <= rest)
+                {
+                    int newQty = currentQty + 1;
+
+                    try
+                    {
+                        //Получаем партии по FIFO
+                        var batches = GetBatchesForShipment(productId, newQty);
+                        decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
+
+                        _shipmentItems[productId] = new ShipmentItemInfo
+                        {
+                            ProductId = productId,
+                            ProductName = productName,
+                            Quantity = newQty,
+                            TotalPrice = totalPrice,
+                            Batches = batches
+                        };
+
+                        dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+                else
+                {
+                    Logger.Warn($"WARN-03: Попытка отгрузить количество, превышающее остаток.\n" +
+                        $"Пользователь: {CurrentUser.User?.Login}\n" +
+                        $"ProductId: {productId} | Артикул: {article} | Товар: {productName}\n" +
+                        $"Текущее количество: {currentQty} | Запрошено: {currentQty + 1} | Доступно: {rest}\n" +
+                        $"Время: {DateTime.Now}");
+                    MessageBox.Show(AppResources.MsgNotEnough);
+                }
+            }
+            else if (e.ColumnIndex == dgvShipment.Columns["colMinus"].Index)
+            {
+                int currentQty = _shipmentItems.ContainsKey(productId) ? _shipmentItems[productId].Quantity : 0;
+
+                if (currentQty > 0)
+                {
+                    int newQty = currentQty - 1;
+
+                    if (newQty == 0)
+                    {
+                        _shipmentItems.Remove(productId);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var batches = GetBatchesForShipment(productId, newQty);
+                            decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
+
+                            _shipmentItems[productId] = new ShipmentItemInfo
+                            {
+                                ProductId = productId,
+                                ProductName = productName,
+                                Quantity = newQty,
+                                TotalPrice = totalPrice,
+                                Batches = batches
+                            };
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+
+                    dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
+                }
+            }
+
+            UpdateTotal();
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace Sklad_project_app
             lblUserInfo.Text = AppResources.LblStorekeeper
                 + CurrentUser.User.Surname + " " + CurrentUser.User.Name;
         }
+       
         private void LoadProductsToComboBox()
         {
             using (var db = new SkladContext())
@@ -80,153 +81,214 @@ namespace Sklad_project_app
                 cmbDate.SelectedIndex = 0;
             }
         }
-
-        public void LoadSupplies()
+        private void UpdateDiscountsFromExpiry()
         {
             using (var db = new SkladContext())
             {
-                var allSupplies = db.SuppliesItems
-                    .Include(s => s.Product)
-                    .ThenInclude(p => p.Category)
-                    .Include(s => s.Product)
-                    .Include(s => s.Supplies)
-                    .OrderBy(s => s.Supplies.SuppliesDate)
+                var today = DateTime.Now.Date;
+
+                var batches = db.StockBatches
+                    .Include(b => b.Product)
+                    .Where(b => !b.IsWrittenOff && b.Quantity > 0 && b.ExpiryDate != null)
                     .ToList();
 
-                int totalCount = allSupplies.Count;
-                var searchText = txtSearch.Text.Trim().ToLower();
-                var afterSearch = new List<SuppliesItem>();
+                bool changed = false;
 
-                if (string.IsNullOrEmpty(searchText))
+                foreach (var batch in batches)
                 {
-                    afterSearch = allSupplies;
-                }
-                else
-                {
-                    foreach (var supply in allSupplies)
+                    int daysLeft = (batch.ExpiryDate.Value.Date - today).Days;
+                    int totalDays = batch.TotalDays;
+
+                    decimal newDiscount = 0;
+
+                    if (daysLeft <= 0)
                     {
-                        var productName = supply.Product.Name.ToLower() ?? "";
-                        var productArticle = supply.Product.Article.ToLower() ?? "";
-
-                        if (productName.Contains(searchText) || productArticle.Contains(searchText))
+                        newDiscount = 100;
+                    }
+                    else if (totalDays > 0)
+                    {
+                        double percentLeft = (double)daysLeft / totalDays * 100;
+                        if (percentLeft <= 20)
                         {
-                            afterSearch.Add(supply);
+                            newDiscount = 50;
                         }
                     }
-                }
 
-                var afterCategory = new List<SuppliesItem>();
-
-                if (cmbCategory.SelectedIndex <= 0)
-                {
-                    afterCategory = afterSearch;
-                }
-                else
-                {
-                    var selectedCategoryName = cmbCategory.SelectedItem.ToString();
-                    foreach (var supply in afterSearch)
+                    if (batch.DiscountPercent != newDiscount)
                     {
-                        if (supply.Product?.Category != null && supply.Product.Category.Name == selectedCategoryName)
+                        batch.DiscountPercent = newDiscount;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                    db.SaveChanges();
+            }
+        }
+
+        public void LoadSupplies()
+        {
+            try
+            {
+                UpdateDiscountsFromExpiry();
+                using (var db = new SkladContext())
+                {
+                    var allSupplies = db.SuppliesItems
+                        .Include(s => s.Product)
+                        .ThenInclude(p => p.Category)
+                        .Include(s => s.Product)
+                        .Include(s => s.Supplies)
+                        .OrderBy(s => s.Supplies.SuppliesDate)
+                        .ToList();
+
+                    int totalCount = allSupplies.Count;
+                    var searchText = txtSearch.Text.Trim().ToLower();
+                    var afterSearch = new List<SuppliesItem>();
+
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        afterSearch = allSupplies;
+                    }
+                    else
+                    {
+                        foreach (var supply in allSupplies)
                         {
-                            afterCategory.Add(supply);
+                            var productName = supply.Product.Name.ToLower() ?? "";
+                            var productArticle = supply.Product.Article.ToLower() ?? "";
+
+                            if (productName.Contains(searchText) || productArticle.Contains(searchText))
+                            {
+                                afterSearch.Add(supply);
+                            }
                         }
                     }
-                }
 
-                var afterDate = new List<SuppliesItem>();
+                    var afterCategory = new List<SuppliesItem>();
 
-                if (cmbDate.SelectedIndex <= 0)
-                {
-                    afterDate = afterCategory;
-                }
-                else
-                {
-                    string selectedDateStr = cmbDate.SelectedItem.ToString();
-                    DateTime selectedDate = DateTime.ParseExact(selectedDateStr, "dd.MM.yyyy", null);
-
-                    foreach (var supply in afterCategory)
+                    if (cmbCategory.SelectedIndex <= 0)
                     {
-                        var supplyDate = supply.Supplies?.SuppliesDate.Date;
-
-                        if (supplyDate == selectedDate)
+                        afterCategory = afterSearch;
+                    }
+                    else
+                    {
+                        var selectedCategoryName = cmbCategory.SelectedItem.ToString();
+                        foreach (var supply in afterSearch)
                         {
-                            afterDate.Add(supply);
+                            if (supply.Product?.Category != null && supply.Product.Category.Name == selectedCategoryName)
+                            {
+                                afterCategory.Add(supply);
+                            }
                         }
                     }
-                }
-                decimal priceFrom = 0;
-                decimal priceTo = 1000000;
-                decimal.TryParse(txtPriceFrom.Text, out priceFrom);
-                decimal.TryParse(txtPriceTo.Text, out priceTo);
 
-                if (priceFrom < 0 || priceTo < 0)
-                {
-                    MessageBox.Show("Цена не может быть отрицательной", "Ошибка",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    if (priceFrom < 0) priceFrom = 0;
-                    if (priceTo < 0) priceTo = 1000000;
-                }
+                    var afterDate = new List<SuppliesItem>();
 
-                if (priceFrom > priceTo)
-                {
-                    (priceFrom, priceTo) = (priceTo, priceFrom);
-                }
-
-                var afterPrice = new List<SuppliesItem>();
-                foreach (var supply in afterDate)
-                {
-                    if (supply.PurchasePrice >= priceFrom && supply.PurchasePrice <= priceTo)
+                    if (cmbDate.SelectedIndex <= 0)
                     {
-                        afterPrice.Add(supply);
+                        afterDate = afterCategory;
+                    }
+                    else
+                    {
+                        string selectedDateStr = cmbDate.SelectedItem.ToString();
+                        DateTime selectedDate = DateTime.ParseExact(selectedDateStr, "dd.MM.yyyy", null);
+
+                        foreach (var supply in afterCategory)
+                        {
+                            var supplyDate = supply.Supplies?.SuppliesDate.Date;
+
+                            if (supplyDate == selectedDate)
+                            {
+                                afterDate.Add(supply);
+                            }
+                        }
+                    }
+                    decimal priceFrom = 0;
+                    decimal priceTo = 1000000;
+                    decimal.TryParse(txtPriceFrom.Text, out priceFrom);
+                    decimal.TryParse(txtPriceTo.Text, out priceTo);
+
+                    if (priceFrom < 0 || priceTo < 0)
+                    {
+                        MessageBox.Show("Цена не может быть отрицательной", "Ошибка",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        if (priceFrom < 0) priceFrom = 0;
+                        if (priceTo < 0) priceTo = 1000000;
+                    }
+
+                    if (priceFrom > priceTo)
+                    {
+                        (priceFrom, priceTo) = (priceTo, priceFrom);
+                    }
+
+                    var afterPrice = new List<SuppliesItem>();
+                    foreach (var supply in afterDate)
+                    {
+                        if (supply.PurchasePrice >= priceFrom && supply.PurchasePrice <= priceTo)
+                        {
+                            afterPrice.Add(supply);
+                        }
+                    }
+
+                    lblFound.Text = $"Найдено: {afterPrice.Count} из {totalCount}";
+
+                    dgvProducts.Rows.Clear();
+                    dgvProducts.Columns.Clear();
+
+                    dgvProducts.Columns.Add("colArticle", "Артикул");
+                    dgvProducts.Columns.Add("colProductName", "Товар");
+                    dgvProducts.Columns.Add("colCategory", "Категория");
+                    dgvProducts.Columns.Add("colQuantity", "Количество");
+                    dgvProducts.Columns.Add("colPrice", "Цена закупки");
+                    dgvProducts.Columns.Add("colExpiryDate", "Годен до");
+                    dgvProducts.Columns.Add("colDate", "Дата поставки");
+                    dgvProducts.Columns.Add("colSupplyId", "SupplyId");
+                    dgvProducts.Columns.Add("colProductId", "ProductId");
+                    dgvProducts.Columns.Add("colId", "ID");
+                    dgvProducts.Columns["colId"].Visible = false;
+
+                    dgvProducts.Columns["colSupplyId"].Visible = false;
+                    dgvProducts.Columns["colProductId"].Visible = false;
+                    dgvProducts.Columns["colId"].Visible = false;
+
+                    foreach (var supply in afterPrice)
+                    {
+                        var productName = supply.Product.Name ?? "—";
+                        var categoryName = supply.Product.Category?.Name ?? "—";
+                        var article = supply.Product.Article ?? "—";
+                        var supplyDate = supply.Supplies.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
+                        var expiryDate = db.StockBatches
+                            .Where(b => b.SuppliesId == supply.SuppliesId && b.ProductId == supply.ProductId)
+                            .Select(b => b.ExpiryDate)
+                            .FirstOrDefault();
+                        var expiryDateStr = expiryDate?.ToString("dd.MM.yyyy") ?? "—";
+
+
+
+                        dgvProducts.Rows.Add(
+                            article,
+                            productName,
+                            categoryName,
+                            supply.Quantity,
+                            CurrencyHelp.Format(supply.PurchasePrice),
+                            expiryDateStr,
+                            supplyDate,
+                            supply.SuppliesId,
+                            supply.ProductId,
+                            supply.Id
+                        );
                     }
                 }
-
-                lblFound.Text = $"Найдено: {afterPrice.Count} из {totalCount}";
-
-                dgvProducts.Rows.Clear();
-                dgvProducts.Columns.Clear();
-
-                dgvProducts.Columns.Add("colArticle", "Артикул");
-                dgvProducts.Columns.Add("colProductName", "Товар");
-                dgvProducts.Columns.Add("colCategory", "Категория");
-                dgvProducts.Columns.Add("colQuantity", "Количество");
-                dgvProducts.Columns.Add("colPrice", "Цена закупки");
-                dgvProducts.Columns.Add("colExpiryDate", "Годен до");
-                dgvProducts.Columns.Add("colDate", "Дата поставки");
-                dgvProducts.Columns.Add("colSupplyId", "SupplyId");
-                dgvProducts.Columns.Add("colProductId", "ProductId");
-                dgvProducts.Columns.Add("colId", "ID");
-                dgvProducts.Columns["colId"].Visible = false;
-
-                dgvProducts.Columns["colSupplyId"].Visible = false;
-                dgvProducts.Columns["colProductId"].Visible = false;
-                dgvProducts.Columns["colId"].Visible = false;
-
-                foreach (var supply in afterPrice)
-                {
-                    var productName = supply.Product.Name ?? "—";
-                    var categoryName = supply.Product.Category?.Name ?? "—";
-                    var article = supply.Product.Article ?? "—";
-                    var supplyDate = supply.Supplies.SuppliesDate.ToString("dd.MM.yyyy") ?? "—";
-                    var expiryDate = db.StockBatches
-                        .Where(b => b.SuppliesId == supply.SuppliesId && b.ProductId == supply.ProductId)
-                        .Select(b => b.ExpiryDate)
-                        .FirstOrDefault();
-                    var expiryDateStr = expiryDate?.ToString("dd.MM.yyyy") ?? "—";
-
-                    dgvProducts.Rows.Add(
-                        article,
-                        productName,
-                        categoryName,
-                        supply.Quantity,
-                        CurrencyHelp.Format(supply.PurchasePrice),
-                        expiryDateStr,
-                        supplyDate,
-                        supply.SuppliesId,
-                        supply.ProductId,
-                        supply.Id
-                    );
-                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                             $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                             $"Текущая операция: Загрузка каталога товаров\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                             $"Приложение будет завершено.", ex);
+                MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
+                    "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 
@@ -423,6 +485,9 @@ namespace Sklad_project_app
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                int importedCount = 0;
+                int skippedCount = 0;
+                var skippedReasons = new List<string>();
                 try
                 {
                     string json = File.ReadAllText(ofd.FileName);
@@ -455,9 +520,6 @@ namespace Sklad_project_app
                                     MessageBox.Show($"Товар '{item.ProductName}' не найден. Сначала добавьте его в каталог.");
                                     return;
                                 }
-
-
-
                                 //приход
                                 var supply = new Supplies
                                 {
@@ -496,14 +558,37 @@ namespace Sklad_project_app
                             }
                             db.SaveChanges();
                         }
-
+                        Logger.Debug($"DEBUG-08: JSON-файл поставки успешно импортирован.\n" +
+                             $"Пользователь: {CurrentUser.User?.Login}\n" +
+                             $"Файл: {ofd.FileName}\n" +
+                             $"Всего строк: {supplies.Count} | Импортировано: {importedCount} | Пропущено: {skippedCount}\n" +
+                             $"Время: {DateTime.Now}");
+                        // ↑↑↑ DEBUG-08 ↑↑↑
+                        // WARN-04: Пропущенные строки при импорте
+                        if (skippedCount > 0)
+                        {
+                            Logger.Warn($"WARN-04: Пропущенные строки при импорте JSON.\n" +
+                                        $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                        $"Файл: {ofd.FileName}\n" +
+                                        $"Всего строк: {supplies.Count} | Импортировано: {importedCount} | Пропущено: {skippedCount}\n" +
+                                        $"Причины: {string.Join("; ", skippedReasons.Take(5))}");
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Импортировано {importedCount} поставок!");
+                        }
                         LoadSupplies();
-                        MessageBox.Show($"Импортировано {supplies.Count} поставок!");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка: {ex.Message}");
+                    Logger.Error($"ERROR-07: Общая ошибка при импорте JSON-файла поставки.\n" +
+                                 $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                 $"Файл: {ofd.FileName}\n" +
+                                 $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                                 $"Стек: {ex.StackTrace}", ex);
+                    MessageBox.Show($"Ошибка при импорте: {ex.Message}", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -550,6 +635,23 @@ namespace Sklad_project_app
             DateTime expiryDate = dtpDate.Value.Date.AddDays(days).ToUniversalTime();
             int totalDays = days;
 
+            var today = DateTime.Now.Date;
+            int daysLeft = (expiryDate.Date - today).Days;
+            decimal discount = 0;
+
+            if (daysLeft <= 0)
+            {
+                discount = 100;
+            }
+            else if (totalDays > 0)
+            {
+                double percentLeft = (double)daysLeft / totalDays * 100;
+                if (percentLeft <= 20)
+                {
+                    discount = 50;
+                }
+            }
+
             using (var db = new SkladContext())
             {
                 if (cmbProduct.SelectedItem == null)
@@ -566,57 +668,79 @@ namespace Sklad_project_app
                     MessageBox.Show("Товар не найден");
                     return;
                 }
+                try
+                {
+                    var supply = new Supplies
+                    {
+                        Id = Guid.NewGuid(),
+                        SuppliesDate = dtpDate.Value.ToUniversalTime(),
+                        UserId = CurrentUser.User.Id,
+                    };
+                    db.Supplies.Add(supply);
+                    db.SaveChanges();
 
-                var supply = new Supplies
-                {
-                    Id = Guid.NewGuid(),
-                    SuppliesDate = dtpDate.Value.ToUniversalTime(),
-                    UserId = CurrentUser.User.Id,
-                };
-                db.Supplies.Add(supply);
-                db.SaveChanges();
+                    var supplyItem = new SuppliesItem
+                    {
+                        Id = Guid.NewGuid(),
+                        SuppliesId = supply.Id,
+                        ProductId = product.Id,
+                        Quantity = quantity,
+                        PurchasePrice = priceInRub,
+                    };
+                    db.SuppliesItems.Add(supplyItem);
 
-                var supplyItem = new SuppliesItem
-                {
-                    Id = Guid.NewGuid(),
-                    SuppliesId = supply.Id,
-                    ProductId = product.Id,
-                    Quantity = quantity,
-                    PurchasePrice = priceInRub,
-                };
-                db.SuppliesItems.Add(supplyItem);
-
-                var stockBatch = new StockBatch
-                {
-                    Id = Guid.NewGuid(),
-                    ProductId = product.Id,
-                    SuppliesId = supply.Id,
-                    Quantity = quantity,
-                    PurchasePrice = priceInRub,
-                    ExpiryDate = expiryDate,
-                    TotalDays = totalDays,
-                    DiscountPercent = 0,
-                    IsWrittenOff = false
-                };
-                db.StockBatches.Add(stockBatch);
-                var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
-                if (stock != null)
-                {
-                    stock.Rest += quantity;
-                }
-                else
-                {
-                    stock = new Stock
+                    var stockBatch = new StockBatch
                     {
                         Id = Guid.NewGuid(),
                         ProductId = product.Id,
-                        Rest = quantity,
-                        PurchasePrice = priceInRub
+                        SuppliesId = supply.Id,
+                        Quantity = quantity,
+                        PurchasePrice = priceInRub,
+                        ExpiryDate = expiryDate,
+                        TotalDays = totalDays,
+                        DiscountPercent = discount,
+                        IsWrittenOff = false
                     };
-                    db.Stocks.Add(stock);
-                }
+                    db.StockBatches.Add(stockBatch);
+                    var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
+                    if (stock != null)
+                    {
+                        stock.Rest += quantity;
+                    }
+                    else
+                    {
+                        stock = new Stock
+                        {
+                            Id = Guid.NewGuid(),
+                            ProductId = product.Id,
+                            Rest = quantity,
+                            PurchasePrice = priceInRub
+                        };
+                        db.Stocks.Add(stock);
+                    }
 
-                db.SaveChanges();
+                    db.SaveChanges();
+                    Logger.Debug($"DEBUG-07: Поставка успешно сохранена.\n" +
+                         $"Пользователь: {CurrentUser.User?.Login}\n" +
+                         $"SupplyId: {supply.Id} | Дата: {dtpDate.Value:dd.MM.yyyy}\n" +
+                         $"Товар: {product.Name} | Артикул: {product.Article}\n" +
+                         $"Количество: {quantity} | Цена: {priceInRub} руб.\n" +
+                         $"Срок годности: {expiryDate:dd.MM.yyyy} | Осталось дней: {daysLeft} | Скидка: {discount}%\n" +
+                         $"Время: {DateTime.Now}");
+
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"ERROR-03: Не удалось сохранить поставку.\n" +
+                                 $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                 $"Товар: {cmbProduct.Text} | Количество: {quantity} | Цена: {price}\n" +
+                                 $"Срок годности: {days} дней\n" +
+                                 $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                                 $"Стек: {ex.StackTrace}", ex);
+                    MessageBox.Show("Ошибка сохранения поставки", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
             txtArticleView.Text = "";
             txtNameView.Text = "";
@@ -626,11 +750,6 @@ namespace Sklad_project_app
             panelView.Visible = false;
             LoadSupplies();
             MessageBox.Show("Поставка сохранена!");
-        }
-
-        private void cmbArtic_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)

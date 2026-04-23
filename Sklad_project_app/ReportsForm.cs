@@ -48,130 +48,144 @@ namespace Sklad_project_app
 
         public void LoadReports()
         {
-            using (var db = new SkladContext())
+            try
             {
-                var allShipments = db.Shipments
-                    .Include(s => s.Client)
-                    .Include(s => s.ShipmentItems)
-                    .ThenInclude(i => i.Product)
-                    .ThenInclude(p => p.Stock)
-                    .OrderBy(s => s.ShipmentDate)
-                    .ToList();
-
-                int totalCount = allShipments.Count;
-
-                DateTime dateFrom = dtpDateFrom.Value.Date;
-                DateTime dateTo = dtpDateTo.Value.Date.AddDays(1).AddSeconds(-1);
-
-                var afterDate = new List<Shipment>();
-                foreach (var shipment in allShipments)
+                using (var db = new SkladContext())
                 {
-                    if (shipment.ShipmentDate >= dateFrom && shipment.ShipmentDate <= dateTo)
+                    var allShipments = db.Shipments
+                        .Include(s => s.Client)
+                        .Include(s => s.ShipmentItems)
+                        .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.Stock)
+                        .OrderBy(s => s.ShipmentDate)
+                        .ToList();
+
+                    int totalCount = allShipments.Count;
+
+                    DateTime dateFrom = dtpDateFrom.Value.Date;
+                    DateTime dateTo = dtpDateTo.Value.Date.AddDays(1).AddSeconds(-1);
+
+                    var afterDate = new List<Shipment>();
+                    foreach (var shipment in allShipments)
                     {
-                        afterDate.Add(shipment);
-                    }
-                }
-
-                var afterClient = new List<Shipment>();
-
-                if (cmbClient.SelectedIndex <= 0 || cmbClient.SelectedItem.ToString() == "Все")
-                {
-                    afterClient = afterDate;
-                }
-                else
-                {
-                    string selectedClientName = cmbClient.SelectedItem.ToString();
-                    foreach (var shipment in afterDate)
-                    {
-                        if (shipment.Client != null && shipment.Client.Name == selectedClientName)
+                        if (shipment.ShipmentDate >= dateFrom && shipment.ShipmentDate <= dateTo)
                         {
-                            afterClient.Add(shipment);
+                            afterDate.Add(shipment);
                         }
                     }
-                }
 
-                decimal profitFrom = 0;
-                decimal profitTo = 1000000;
+                    var afterClient = new List<Shipment>();
 
-                decimal.TryParse(txtProfitFrom.Text, out profitFrom);
-                decimal.TryParse(txtProfitTo.Text, out profitTo);
-
-                if (profitFrom > profitTo)
-                {
-                    (profitFrom, profitTo) = (profitTo, profitFrom);
-                }
-                var afterProfit = new List<Shipment>();
-                foreach (var shipment in afterClient)
-                {
-                    decimal shipmentProfit = 0;
-                    foreach (var item in shipment.ShipmentItems)
+                    if (cmbClient.SelectedIndex <= 0 || cmbClient.SelectedItem.ToString() == "Все")
                     {
-                        var supplies = db.SuppliesItems
-                            .Where(s => s.ProductId == item.ProductId)
-                            .ToList();
-
-                        decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
-                        decimal totalQty = supplies.Sum(s => s.Quantity);
-                        decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
-
-                        shipmentProfit += item.Amount - (avgPrice * item.Quantity);
+                        afterClient = afterDate;
+                    }
+                    else
+                    {
+                        string selectedClientName = cmbClient.SelectedItem.ToString();
+                        foreach (var shipment in afterDate)
+                        {
+                            if (shipment.Client != null && shipment.Client.Name == selectedClientName)
+                            {
+                                afterClient.Add(shipment);
+                            }
+                        }
                     }
 
-                    if (shipmentProfit >= profitFrom && shipmentProfit <= profitTo)
+                    decimal profitFrom = 0;
+                    decimal profitTo = 1000000;
+
+                    decimal.TryParse(txtProfitFrom.Text, out profitFrom);
+                    decimal.TryParse(txtProfitTo.Text, out profitTo);
+
+                    if (profitFrom > profitTo)
                     {
-                        afterProfit.Add(shipment);
+                        (profitFrom, profitTo) = (profitTo, profitFrom);
                     }
-                }
-
-                lblFound.Text = $"Найдено: {afterProfit.Count} из {totalCount}";
-
-                dgvReports.Rows.Clear();
-                dgvReports.Columns.Clear();
-                dgvReports.Columns.Add("colDate", "Дата");
-                dgvReports.Columns.Add("colClient", "Покупатель");
-                dgvReports.Columns.Add("colAmount", "Сумма");
-                dgvReports.Columns.Add("colProfit", "Прибыль");
-
-                decimal totalAmount = 0;
-                decimal totalProfit = 0;
-
-                foreach (var shipment in afterProfit)
-                {
-                    decimal shipmentAmount = 0;
-                    decimal shipmentProfit = 0;
-
-                    foreach (var item in shipment.ShipmentItems)
+                    var afterProfit = new List<Shipment>();
+                    foreach (var shipment in afterClient)
                     {
-                        shipmentAmount += item.Amount;
+                        decimal shipmentProfit = 0;
+                        foreach (var item in shipment.ShipmentItems)
+                        {
+                            var supplies = db.SuppliesItems
+                                .Where(s => s.ProductId == item.ProductId)
+                                .ToList();
 
-                        var productId = item.ProductId;
+                            decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
+                            decimal totalQty = supplies.Sum(s => s.Quantity);
+                            decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
 
-                        var supplies = db.SuppliesItems
-                            .Where(s => s.ProductId == productId)
-                            .ToList();
+                            shipmentProfit += item.Amount - (avgPrice * item.Quantity);
+                        }
 
-                        decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
-                        decimal totalQty = supplies.Sum(s => s.Quantity);
-                        decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
-
-                        decimal cost = avgPrice * item.Quantity;
-                        decimal profit = item.Amount - cost;
-
-                        shipmentProfit += profit;
+                        if (shipmentProfit >= profitFrom && shipmentProfit <= profitTo)
+                        {
+                            afterProfit.Add(shipment);
+                        }
                     }
 
-                    totalAmount += shipmentAmount;
-                    totalProfit += shipmentProfit;
+                    lblFound.Text = $"Найдено: {afterProfit.Count} из {totalCount}";
 
-                    dgvReports.Rows.Add(
-                        shipment.ShipmentDate?.ToString("dd.MM.yyyy") ?? "—",
-                        shipment.Client?.Name ?? "—",
-                        CurrencyHelp.Format(shipmentAmount),
-                        CurrencyHelp.Format(shipmentProfit)
-                    );
+                    dgvReports.Rows.Clear();
+                    dgvReports.Columns.Clear();
+                    dgvReports.Columns.Add("colDate", "Дата");
+                    dgvReports.Columns.Add("colClient", "Покупатель");
+                    dgvReports.Columns.Add("colAmount", "Сумма");
+                    dgvReports.Columns.Add("colProfit", "Прибыль");
+
+                    decimal totalAmount = 0;
+                    decimal totalProfit = 0;
+
+                    foreach (var shipment in afterProfit)
+                    {
+                        decimal shipmentAmount = 0;
+                        decimal shipmentProfit = 0;
+
+                        foreach (var item in shipment.ShipmentItems)
+                        {
+                            shipmentAmount += item.Amount;
+
+                            var productId = item.ProductId;
+
+                            var supplies = db.SuppliesItems
+                                .Where(s => s.ProductId == productId)
+                                .ToList();
+
+                            decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
+                            decimal totalQty = supplies.Sum(s => s.Quantity);
+                            decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
+
+                            decimal cost = avgPrice * item.Quantity;
+                            decimal profit = item.Amount - cost;
+
+                            shipmentProfit += profit;
+                        }
+
+                        totalAmount += shipmentAmount;
+                        totalProfit += shipmentProfit;
+
+                        dgvReports.Rows.Add(
+                            shipment.ShipmentDate?.ToString("dd.MM.yyyy") ?? "—",
+                            shipment.Client?.Name ?? "—",
+                            CurrencyHelp.Format(shipmentAmount),
+                            CurrencyHelp.Format(shipmentProfit)
+                        );
+                    }
+
+                    dgvReports.Rows.Add("ИТОГО:", "", CurrencyHelp.Format(totalAmount), CurrencyHelp.Format(totalProfit));
                 }
-
-                dgvReports.Rows.Add("ИТОГО:", "", CurrencyHelp.Format(totalAmount), CurrencyHelp.Format(totalProfit));
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                             $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                             $"Текущая операция: Загрузка каталога товаров\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                             $"Приложение будет завершено.", ex);
+                MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
+                    "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 
@@ -228,7 +242,13 @@ namespace Sklad_project_app
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка",
+                Logger.Error($"ERROR-08: Не удалось экспортировать отчёт в CSV.\n" +
+                             $"Пользователь: {CurrentUser.User?.Login}\n" +
+                             $"Путь сохранения: {filePath}\n" +
+                             $"Период отчёта: {dtpDateFrom.Value:dd.MM.yyyy} - {dtpDateTo.Value:dd.MM.yyyy}\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                             $"Стек: {ex.StackTrace}", ex);
+                MessageBox.Show($"Ошибка при экспорте отчёта: {ex.Message}", "Ошибка",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

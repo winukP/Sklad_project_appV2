@@ -1,4 +1,6 @@
-﻿namespace Sklad_project_app
+﻿using System.Configuration;
+
+namespace Sklad_project_app
 {
     public static class DbConfig
     {

@@ -39,106 +39,112 @@ namespace Sklad_project_app
 
         public void LoadExpiringProducts()
         {
-            using (var db = new SkladContext())
+            try
             {
-                var today = DateTime.Now.Date;
-
-                var batches = db.StockBatches
-                    .Include(b => b.Product)
-                    .ThenInclude(p => p.Category)
-                    .Where(b => b.IsWrittenOff == false && b.Quantity > 0 && b.ExpiryDate != null)
-                    .ToList();
-
-                dgvExpiry.Rows.Clear();
-                dgvExpiry.Columns.Clear();
-
-                dgvExpiry.Columns.Add("colId", "ID");
-                dgvExpiry.Columns.Add("colProduct", "Товар");
-                dgvExpiry.Columns.Add("colCategory", "Категория");
-                dgvExpiry.Columns.Add("colQuantity", "Остаток");
-                dgvExpiry.Columns.Add("colExpiry", "Годен до");
-                dgvExpiry.Columns.Add("colDaysLeft", "Дней осталось");
-                dgvExpiry.Columns.Add("colDiscount", "Скидка");
-                dgvExpiry.Columns.Add("colStatus", "Статус");
-                dgvExpiry.Columns["colId"].Visible = false;
-
-                string searchText = txtSearch.Text.Trim().ToLower();
-                string selectedStatus = cmbDiscount.SelectedItem?.ToString();
-
-                foreach (var batch in batches)
+                using (var db = new SkladContext())
                 {
-                    string productName = batch.Product?.Name ?? "";
-                    if (!string.IsNullOrEmpty(searchText) && !productName.ToLower().Contains(searchText))
-                    {
-                        continue;
-                    }
-                    int daysLeft = (batch.ExpiryDate.Value.Date - today).Days;
-                    int totalDays = batch.TotalDays;
-                    decimal discount = 0;
-                    string status = "";
+                    var today = DateTime.Now.Date;
 
-                    if (daysLeft <= 0)
-                    {
-                        discount = 100;
-                        status = "Просрочен";
-                        daysLeft = 0;
-                    }
-                    else if (totalDays > 0)
-                    {
-                        double percentLeft = (double)daysLeft / totalDays * 100;
+                    var batches = db.StockBatches
+                        .Include(b => b.Product)
+                        .ThenInclude(p => p.Category)
+                        .Where(b => b.IsWrittenOff == false && b.Quantity > 0 && b.ExpiryDate != null)
+                        .ToList();
 
-                        if (percentLeft <= 20)
+                    dgvExpiry.Rows.Clear();
+                    dgvExpiry.Columns.Clear();
+
+                    dgvExpiry.Columns.Add("colId", "ID");
+                    dgvExpiry.Columns.Add("colProduct", "Товар");
+                    dgvExpiry.Columns.Add("colCategory", "Категория");
+                    dgvExpiry.Columns.Add("colQuantity", "Остаток");
+                    dgvExpiry.Columns.Add("colExpiry", "Годен до");
+                    dgvExpiry.Columns.Add("colDaysLeft", "Дней осталось");
+                    dgvExpiry.Columns.Add("colDiscount", "Скидка");
+                    dgvExpiry.Columns.Add("colStatus", "Статус");
+                    dgvExpiry.Columns["colId"].Visible = false;
+
+                    string searchText = txtSearch.Text.Trim().ToLower();
+                    string selectedStatus = cmbDiscount.SelectedItem?.ToString();
+
+                    foreach (var batch in batches)
+                    {
+                        string productName = batch.Product?.Name ?? "";
+                        if (!string.IsNullOrEmpty(searchText) && !productName.ToLower().Contains(searchText))
                         {
-                            discount = 50;
-                            status = "Скидка есть";
+                            continue;
+                        }
+                        int daysLeft = (batch.ExpiryDate.Value.Date - today).Days;
+                        decimal discount = batch.DiscountPercent;
+                        string status = "";
+
+                        if (daysLeft <= 0)
+                        {
+                            status = "Просрочен";
+                            daysLeft = 0;
+                            Logger.Warn($"WARN-06: Обнаружена просроченная партия товара.\n" +
+                                $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                $"ProductId: {batch.ProductId} | Название: {batch.Product?.Name}\n" +
+                                $"BatchId: {batch.Id}\n" +
+                                $"Срок годности: {batch.ExpiryDate:dd.MM.yyyy} | Просрочено на: {-daysLeft} дней\n" +
+                                $"Требуется списание.");
+                        }
+                        else if (discount > 0)
+                        {
+                            status = "Скидка есть"; 
+                            Logger.Warn($"WARN-05: Товар приближается к истечению срока годности --- активирована скидка.\n" +
+                                    $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                    $"ProductId: {batch.ProductId} | Название: {batch.Product?.Name}\n" +
+                                    $"BatchId: {batch.Id}\n" +
+                                    $"Срок годности: {batch.ExpiryDate:dd.MM.yyyy} | Осталось дней: {daysLeft}\n" +
+                                    $"Установлена скидка: {discount}%");
                         }
                         else
                         {
-                            discount = 0;
                             status = "Норма";
                         }
-                    }
-                    else
-                    {
-                        discount = 0;
-                        status = "Норма";
-                    }
 
-                    if (selectedStatus != "Все" && status != selectedStatus)
-                        continue;
+                        if (selectedStatus != "Все" && status != selectedStatus)
+                            continue;
 
-                    if (batch.DiscountPercent != discount)
-                    {
-                        batch.DiscountPercent = discount;
-                        db.SaveChanges();
-                    }
+                        dgvExpiry.Rows.Add(
+                            batch.Id,
+                            batch.Product?.Name ?? "—",
+                            batch.Product?.Category?.Name ?? "—",
+                            batch.Quantity,
+                            batch.ExpiryDate.Value.ToString("dd.MM.yyyy"),
+                            daysLeft,
+                            $"{discount}%",
+                            status
+                        );
 
-                    dgvExpiry.Rows.Add(
-                        batch.Id,
-                        batch.Product?.Name ?? "—",
-                        batch.Product?.Category?.Name ?? "—",
-                        batch.Quantity,
-                        batch.ExpiryDate.Value.ToString("dd.MM.yyyy"),
-                        daysLeft,
-                        $"{discount}%",
-                        status
-                    );
-
-                    var row = dgvExpiry.Rows[dgvExpiry.Rows.Count - 1];
-                    if (status == "Просрочен")
-                    {
-                        row.DefaultCellStyle.BackColor = Color.LightCoral;
+                        var row = dgvExpiry.Rows[dgvExpiry.Rows.Count - 1];
+                        if (status == "Просрочен")
+                        {
+                            row.DefaultCellStyle.BackColor = Color.LightCoral;
+                        }
+                        else if (discount > 0)
+                        {
+                            row.DefaultCellStyle.BackColor = Color.Orange;
+                        }
+                        else
+                        {
+                            row.DefaultCellStyle.BackColor = Color.LightGreen;
+                        }
                     }
-                    else if (discount > 0)
-                    {
-                        row.DefaultCellStyle.BackColor = Color.Orange;
-                    }
-                    else
-                    {
-                        row.DefaultCellStyle.BackColor = Color.LightGreen;
-                    }
+                    lblFound.Text = $"Найдено: {dgvExpiry.Rows.Count} из {batches.Count}";
                 }
-                lblFound.Text = $"Найдено: {dgvExpiry.Rows.Count} из {batches.Count}";
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                             $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
+                             $"Текущая операция: Загрузка каталога товаров\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                             $"Приложение будет завершено.", ex);
+                MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
+                    "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 
@@ -260,35 +266,57 @@ namespace Sklad_project_app
             {
                 using (var db = new SkladContext())
                 {
-                    var batch = db.StockBatches.Find(batchId);
-                    if (batch != null)
+                    try
                     {
-                        var writeOff = new WriteOff
+                        var batch = db.StockBatches.Find(batchId);
+                        if (batch != null)
                         {
-                            Id = Guid.NewGuid(),
-                            ProductId = batch.ProductId,
-                            BatchId = batch.Id,
-                            WriteOffDate = DateTime.Now.ToUniversalTime(),
-                            Quantity = batch.Quantity,
-                            LossAmount = batch.Quantity * batch.PurchasePrice,
-                            Reason = "Истёк срок годности"
-                        };
-                        db.WriteOffs.Add(writeOff);
+                            decimal lossAmount = batch.Quantity * batch.PurchasePrice;
+                            var writeOff = new WriteOff
+                            {
+                                Id = Guid.NewGuid(),
+                                ProductId = batch.ProductId,
+                                BatchId = batch.Id,
+                                WriteOffDate = DateTime.Now.ToUniversalTime(),
+                                Quantity = batch.Quantity,
+                                LossAmount = lossAmount,
+                                Reason = "Истёк срок годности"
+                            };
+                            db.WriteOffs.Add(writeOff);
 
-                        batch.IsWrittenOff = true;
-                        batch.Quantity = 0;
-                        batch.DiscountPercent = 0;
+                            batch.IsWrittenOff = true;
+                            batch.Quantity = 0;
+                            batch.DiscountPercent = 0;
 
-                        var stock = db.Stocks.FirstOrDefault(s => s.ProductId == batch.ProductId);
-                        if (stock != null)
-                        {
-                            stock.Rest -= batch.Quantity;
+                            var stock = db.Stocks.FirstOrDefault(s => s.ProductId == batch.ProductId);
+                            if (stock != null)
+                            {
+                                stock.Rest -= batch.Quantity;
+                            }
+
+                            db.SaveChanges();
+                            Logger.Debug($"DEBUG-09: Партия товара списана.\n" +
+                                     $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                     $"WriteOffId: {writeOff.Id} | BatchId: {batch.Id}\n" +
+                                     $"ProductId: {batch.ProductId} | Товар: {productName}\n" +
+                                     $"Количество: {batch.Quantity} | Убыток: {lossAmount:F2} руб.\n" +
+                                     $"Причина: Истёк срок годности\n" +
+                                     $"Время: {DateTime.Now}");
+
+                            MessageBox.Show($"Товар '{productName}' списан");
+                            LoadExpiringProducts();
                         }
-
-                        db.SaveChanges();
-
-                        MessageBox.Show($"Товар '{productName}' списан");
-                        LoadExpiringProducts();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"ERROR-04: Не удалось выполнить списание партии.\n" +
+                                     $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                     $"BatchId: {batchId} | ProductId: {selectedRow.Cells["colProductId"]?.Value}\n" +
+                                     $"Товар: {productName} | Количество: {quantity}\n" +
+                                     $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                                     $"Стек: {ex.StackTrace}", ex);
+                        MessageBox.Show("Ошибка списания товара", "Ошибка",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

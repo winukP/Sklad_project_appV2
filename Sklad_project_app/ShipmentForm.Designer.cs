@@ -151,6 +151,7 @@ namespace Sklad_project_app
             txtClientName.Name = "txtClientName";
             txtClientName.Size = new Size(130, 27);
             txtClientName.TabIndex = 2;
+            txtClientName.TextChanged += txtClientName_TextChanged;
             // 
             // lblDate
             // 
@@ -348,7 +349,7 @@ namespace Sklad_project_app
             dgvShipment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvShipment.Size = new Size(960, 420);
             dgvShipment.TabIndex = 4;
-            dgvShipment.CellClick += dgvShipment_CellClick;
+            dgvShipment.CellContentClick += dgvShipment_CellContentClick;
             // 
             // ShipmentForm
             // 

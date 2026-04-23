@@ -74,11 +74,6 @@ namespace Sklad_project_app
             lblCurrentCurrency.Text = $"Текущая валюта: {currency}";
         }
 
-        public class ExchangeRateResponse
-        {
-            public Dictionary<string, double> rates { get; set; }
-        }
-
         private async Task LoadExchangeRates()
         {
             try
@@ -88,6 +83,16 @@ namespace Sklad_project_app
                     string url = "https://api.exchangerate-api.com/v4/latest/RUB";
                     var response = await client.GetStringAsync(url);
                     var data = JsonSerializer.Deserialize<ExchangeRateResponse>(response);
+                    // WARN-10 - API курса валют вернул пустой ответ
+                    if (data?.rates == null || data.rates.Count == 0)
+                    {
+                        Logger.Warn($"WARN-10: API курса валют вернул неожиданный ответ.\n" +
+                                    $"Ответ не содержит данных о курсах.\n" +
+                                    $"Курс не обновлён.");
+                        MessageBox.Show("Не удалось получить курсы валют. Используются сохранённые значения.",
+                            "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
                     if (data?.rates != null)
                     {
@@ -104,12 +109,21 @@ namespace Sklad_project_app
                         _lastUpdate = DateTime.Now;
                         CurrencyHelp.SetRates(_allRates);
                         LoadCurrencies();
+                        Logger.Debug($"DEBUG-10: Курс валюты успешно загружен.\n" +
+                         $"Пользователь: {CurrentUser.User?.Login}\n" +
+                         $"USD: {_allRates.GetValueOrDefault("USD", 0):F2} руб. | EUR: {_allRates.GetValueOrDefault("EUR", 0):F2} руб.\n" +
+                         $"Загружено валют: {_allRates.Count}\n" +
+                         $"Время: {DateTime.Now}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}");
+                Logger.Error($"ERROR-05: Не удалось загрузить курс валют.\n" +
+                     $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                     $"Стек: {ex.StackTrace}", ex);
+                MessageBox.Show("Не удалось обновить курсы валют. Используются сохранённые значения.",
+                    "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         private void btnCloseView_Click(object sender, EventArgs e)
@@ -227,23 +241,36 @@ namespace Sklad_project_app
 
             if (string.IsNullOrEmpty(currencyCode)) return;
 
-            CurrencyHelp.SetCurrency(currencyCode);
-            LoadCurrentCurrency();
-
-            foreach (Form form in Application.OpenForms)
+            try
             {
-                if (form is StorekeeperCatalogForm catalog)
-                    catalog.LoadProducts();
-                else if (form is SuppliesForm supplies)
-                    supplies.LoadSupplies();
-                else if (form is ReportsForm reports)
-                    reports.LoadReports();
-                else if (form is MyShipmentsForm myShipments)
-                    myShipments.LoadMyShipments();
-                else if (form is AdminCatalogForm catalog2)
-                    catalog2.LoadProducts();
-            }
+                CurrencyHelp.SetCurrency(currencyCode);
+                LoadCurrentCurrency();
 
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form is StorekeeperCatalogForm catalog)
+                        catalog.LoadProducts();
+                    else if (form is SuppliesForm supplies)
+                        supplies.LoadSupplies();
+                    else if (form is ReportsForm reports)
+                        reports.LoadReports();
+                    else if (form is MyShipmentsForm myShipments)
+                        myShipments.LoadMyShipments();
+                    else if (form is AdminCatalogForm catalog2)
+                        catalog2.LoadProducts();
+                    else if (form is ShipmentForm shipment)
+                        shipment.LoadProducts();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ERROR-06: Не удалось сохранить настройки валюты.\n" +
+                             $"Пользователь: {CurrentUser.User?.Login}\n" +
+                             $"Выбранная валюта: {currencyCode}\n" +
+                             $"Исключение: {ex.GetType()} --- {ex.Message}", ex);
+                MessageBox.Show("Ошибка сохранения настроек валюты", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             MessageBox.Show($"Валюта изменена на {currencyCode}");
         }
     }

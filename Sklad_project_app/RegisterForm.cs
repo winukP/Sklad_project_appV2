@@ -74,6 +74,10 @@ namespace Sklad_project_app
 
                     if (userLogin == fio)
                     {
+                        // WARN-07: Попытка регистрации с уже существующим логином
+                        Logger.Warn($"WARN-07: Попытка регистрации с уже существующим логином.\n" +
+                                    $"Введённый логин: {fio}\n" +
+                                    $"Время: {DateTime.Now}");
                         MessageBox.Show(AppResources.MsgUserExists);
                         return;
                     }
@@ -124,6 +128,10 @@ namespace Sklad_project_app
                 {
                     db.Users.Add(newUser);
                     db.SaveChanges();
+                    Logger.Debug($"DEBUG-02: Новый пользователь зарегистрирован.\n" +
+                            $"Логин: {fio} | ФИО: {surname} {name} {patronymic}\n" +
+                            $"Роль: {roleName} | UserId: {newUser.Id}\n" +
+                            $"Время: {DateTime.Now}");
                     MessageBox.Show(AppResources.MsgRegSuccess + fio);
                     this.Close();
                 }
