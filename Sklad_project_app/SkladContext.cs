@@ -15,6 +15,10 @@ namespace Sklad_project_app
         public DbSet<Client> Clients { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<ShipmentItem> ShipmentItems { get; set; }
+        public DbSet<Supplies> Supplies { get; set; }
+        public DbSet<SuppliesItem> SuppliesItems { get; set; }
+        public DbSet<StockBatch> StockBatches { get; set; }
+        public DbSet<WriteOff> WriteOffs { get; set; }
 
         public SkladContext() { }
 
@@ -117,6 +121,7 @@ namespace Sklad_project_app
             modelBuilder.Entity<ShipmentItem>().Property(item => item.ShipmentId).HasColumnName("shipment_id");
             modelBuilder.Entity<ShipmentItem>().Property(item => item.ProductId).HasColumnName("product_id");
             modelBuilder.Entity<ShipmentItem>().Property(item => item.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<ShipmentItem>().Property(item => item.Amount).HasColumnName("amount");
             modelBuilder.Entity<ShipmentItem>()
                 .HasOne(item => item.Shipment)
                 .WithMany(shipment => shipment.ShipmentItems)
@@ -125,6 +130,77 @@ namespace Sklad_project_app
                 .HasOne(item => item.Product)
                 .WithMany()
                 .HasForeignKey(item => item.ProductId);
+
+            //supplies
+            modelBuilder.Entity<Supplies>().ToTable("supplies");
+            modelBuilder.Entity<Supplies>().HasKey(s => s.Id);
+            modelBuilder.Entity<Supplies>().Property(s => s.Id).HasColumnName("id");
+            modelBuilder.Entity<Supplies>().Property(s => s.SuppliesDate).HasColumnName("supply_date");
+            modelBuilder.Entity<Supplies>().Property(s => s.UserId).HasColumnName("user_id");
+            modelBuilder.Entity<Supplies>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId);
+            //supplies_items
+            modelBuilder.Entity<SuppliesItem>().ToTable("supplies_items");
+            modelBuilder.Entity<SuppliesItem>().HasKey(item => item.Id);
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.Id).HasColumnName("id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.SuppliesId).HasColumnName("supplies_id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.ProductId).HasColumnName("product_id");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<SuppliesItem>().Property(item => item.PurchasePrice).HasColumnName("purchase_price");
+            modelBuilder.Entity<SuppliesItem>()
+                .HasOne(i => i.Supplies)
+                .WithMany(s => s.SuppliesItems)
+                .HasForeignKey(i => i.SuppliesId);
+            modelBuilder.Entity<SuppliesItem>()
+                .HasOne(i => i.Product)
+                .WithMany()
+                .HasForeignKey(i => i.ProductId);
+
+            //StockBatch
+            modelBuilder.Entity<StockBatch>().ToTable("stock_batches");
+            modelBuilder.Entity<StockBatch>().HasKey(b => b.Id);
+            modelBuilder.Entity<StockBatch>().Property(b => b.Id).HasColumnName("id");
+            modelBuilder.Entity<StockBatch>().Property(b => b.ProductId).HasColumnName("product_id");
+            modelBuilder.Entity<StockBatch>().Property(b => b.SuppliesId).HasColumnName("supplies_id");
+            modelBuilder.Entity<StockBatch>().Property(b => b.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<StockBatch>().Property(b => b.PurchasePrice).HasColumnName("purchase_price");
+            modelBuilder.Entity<StockBatch>().Property(b => b.ExpiryDate).HasColumnName("expiry_date");
+            modelBuilder.Entity<StockBatch>().Property(b => b.DiscountPercent).HasColumnName("discount_percent");
+            modelBuilder.Entity<StockBatch>().Property(b => b.IsWrittenOff).HasColumnName("is_written_off");
+            modelBuilder.Entity<StockBatch>().Property(b => b.TotalDays).HasColumnName("total_days");
+
+            modelBuilder.Entity<StockBatch>()
+                .HasOne(b => b.Product)
+                .WithMany()
+                .HasForeignKey(b => b.ProductId);
+
+            modelBuilder.Entity<StockBatch>()
+                .HasOne(b => b.Supply)
+                .WithMany()
+                .HasForeignKey(b => b.SuppliesId);
+
+            //WriteOffs
+            modelBuilder.Entity<WriteOff>().ToTable("write_offs");
+            modelBuilder.Entity<WriteOff>().HasKey(w => w.Id);
+            modelBuilder.Entity<WriteOff>().Property(w => w.Id).HasColumnName("id");
+            modelBuilder.Entity<WriteOff>().Property(w => w.ProductId).HasColumnName("product_id");
+            modelBuilder.Entity<WriteOff>().Property(w => w.BatchId).HasColumnName("batch_id");
+            modelBuilder.Entity<WriteOff>().Property(w => w.WriteOffDate).HasColumnName("write_off_date");
+            modelBuilder.Entity<WriteOff>().Property(w => w.Quantity).HasColumnName("quantity");
+            modelBuilder.Entity<WriteOff>().Property(w => w.LossAmount).HasColumnName("loss_amount");
+            modelBuilder.Entity<WriteOff>().Property(w => w.Reason).HasColumnName("reason");
+
+            modelBuilder.Entity<WriteOff>()
+                .HasOne(w => w.Product)
+                .WithMany()
+                .HasForeignKey(w => w.ProductId);
+
+            modelBuilder.Entity<WriteOff>()
+                .HasOne(w => w.StockBatch)
+                .WithMany()
+                .HasForeignKey(w => w.BatchId);
 
             base.OnModelCreating(modelBuilder);
         }

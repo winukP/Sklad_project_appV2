@@ -15,12 +15,16 @@ namespace Sklad_project_app
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
+            btnSettings = new Button();
+            btnExpirationDates = new Button();
+            btnReports = new Button();
+            btnSuplies = new Button();
             btnCatalog = new Button();
             btnCategories = new Button();
             btnHistory = new Button();
@@ -117,13 +121,60 @@ namespace Sklad_project_app
             // 
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(btnSettings);
+            panelLeft.Controls.Add(btnExpirationDates);
+            panelLeft.Controls.Add(btnReports);
+            panelLeft.Controls.Add(btnSuplies);
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnCategories);
             panelLeft.Controls.Add(btnHistory);
-            panelLeft.Location = new Point(0, 35);
+            panelLeft.Location = new Point(226, 199);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
+            // 
+            // btnSettings
+            // 
+            btnSettings.FlatStyle = FlatStyle.Flat;
+            btnSettings.ImageAlign = ContentAlignment.TopCenter;
+            btnSettings.Location = new Point(5, 230);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new Size(128, 30);
+            btnSettings.TabIndex = 7;
+            btnSettings.Text = "Настройки";
+            btnSettings.Click += btnSettings_Click;
+            // 
+            // btnExpirationDates
+            // 
+            btnExpirationDates.FlatStyle = FlatStyle.Flat;
+            btnExpirationDates.ImageAlign = ContentAlignment.TopCenter;
+            btnExpirationDates.Location = new Point(5, 194);
+            btnExpirationDates.Name = "btnExpirationDates";
+            btnExpirationDates.Size = new Size(129, 30);
+            btnExpirationDates.TabIndex = 6;
+            btnExpirationDates.Text = "Сроки годности";
+            btnExpirationDates.Click += btnExpirationDates_Click;
+            // 
+            // btnReports
+            // 
+            btnReports.FlatStyle = FlatStyle.Flat;
+            btnReports.ImageAlign = ContentAlignment.TopCenter;
+            btnReports.Location = new Point(5, 158);
+            btnReports.Name = "btnReports";
+            btnReports.Size = new Size(128, 30);
+            btnReports.TabIndex = 5;
+            btnReports.Text = "Отчеты";
+            btnReports.Click += btnReports_Click;
+            // 
+            // btnSuplies
+            // 
+            btnSuplies.FlatStyle = FlatStyle.Flat;
+            btnSuplies.Location = new Point(5, 122);
+            btnSuplies.Name = "btnSuplies";
+            btnSuplies.Size = new Size(128, 30);
+            btnSuplies.TabIndex = 4;
+            btnSuplies.Text = "Поставки";
+            btnSuplies.Click += btnSuplies_Click;
             // 
             // btnCatalog
             // 
@@ -178,7 +229,7 @@ namespace Sklad_project_app
             btnAdd.ForeColor = Color.White;
             btnAdd.Location = new Point(10, 8);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(100, 28);
+            btnAdd.Size = new Size(121, 28);
             btnAdd.TabIndex = 0;
             btnAdd.Text = "Добавить";
             btnAdd.UseVisualStyleBackColor = false;
@@ -189,9 +240,9 @@ namespace Sklad_project_app
             btnEdit.BackColor = Color.FromArgb(70, 70, 70);
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(118, 8);
+            btnEdit.Location = new Point(137, 8);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(100, 28);
+            btnEdit.Size = new Size(121, 28);
             btnEdit.TabIndex = 1;
             btnEdit.Text = "Изменить";
             btnEdit.UseVisualStyleBackColor = false;
@@ -202,9 +253,9 @@ namespace Sklad_project_app
             btnDelete.BackColor = Color.FromArgb(70, 70, 70);
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(226, 8);
+            btnDelete.Location = new Point(264, 8);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(100, 28);
+            btnDelete.Size = new Size(121, 28);
             btnDelete.TabIndex = 2;
             btnDelete.Text = "Удалить";
             btnDelete.UseVisualStyleBackColor = false;
@@ -215,7 +266,7 @@ namespace Sklad_project_app
             btnView.BackColor = Color.FromArgb(70, 70, 70);
             btnView.FlatStyle = FlatStyle.Flat;
             btnView.ForeColor = Color.White;
-            btnView.Location = new Point(334, 8);
+            btnView.Location = new Point(391, 8);
             btnView.Name = "btnView";
             btnView.Size = new Size(128, 28);
             btnView.TabIndex = 3;
@@ -228,9 +279,9 @@ namespace Sklad_project_app
             btnRefresh.BackColor = Color.FromArgb(70, 70, 70);
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(468, 8);
+            btnRefresh.Location = new Point(525, 8);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(100, 28);
+            btnRefresh.Size = new Size(121, 28);
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "Обновить";
             btnRefresh.UseVisualStyleBackColor = false;
@@ -351,7 +402,7 @@ namespace Sklad_project_app
             // btnReset
             // 
             btnReset.FlatStyle = FlatStyle.Flat;
-            btnReset.Location = new Point(137, 69);
+            btnReset.Location = new Point(147, 69);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(92, 29);
             btnReset.TabIndex = 10;
@@ -365,14 +416,14 @@ namespace Sklad_project_app
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
             dgvProducts.Location = new Point(140, 197);
@@ -639,6 +690,9 @@ namespace Sklad_project_app
         private System.Windows.Forms.TextBox txtRestEdit;
         private System.Windows.Forms.Button btnCancelEdit;
         private System.Windows.Forms.Button btnSaveEdit;
-
+        private Button btnSuplies;
+        private Button btnReports;
+        private Button btnExpirationDates;
+        private Button btnSettings;
     }
 }

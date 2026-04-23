@@ -139,33 +139,54 @@ namespace Sklad_project_app
 
             using (var db = new SkladContext())
             {
-                var foundCategory = db.Categories
-                    .Where(category => category.Name == categoryName)
-                    .FirstOrDefault();
-
-                if (foundCategory == null)
-                {
-                    return;
-                }
-
-                var hasProducts = db.Products
-                    .Where(product => product.CategoryId == foundCategory.Id)
-                    .Any();
-
-                if (hasProducts)
-                {
-                    MessageBox.Show(AppResources.MsgCategoryHasProducts);
-                    return;
-                }
-
                 try
                 {
-                    db.Categories.Remove(foundCategory);
-                    db.SaveChanges();
+                    var foundCategory = db.Categories
+                        .Where(category => category.Name == categoryName)
+                        .FirstOrDefault();
+
+                    if (foundCategory == null)
+                    {
+                        return;
+                    }
+                    var hasProducts = db.Products
+                        .Where(product => product.CategoryId == foundCategory.Id)
+                        .Any();
+
+                    if (hasProducts)
+                    {
+                        //WARN-08 — Попытка удалить категорию с привязанными товарами 
+                        int productCount = db.Products.Count(p => p.CategoryId == foundCategory.Id);
+
+                        Logger.Warn($"WARN-08: Попытка удалить категорию, содержащую товары.\n" +
+                                    $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                    $"CategoryId: {foundCategory.Id} | Название: {foundCategory.Name}\n" +
+                                    $"Количество товаров в категории: {productCount}\n" +
+                                    $"Операция отменена.");
+                        MessageBox.Show(AppResources.MsgCategoryHasProducts);
+                        return;
+                    }
+
+                    try
+                    {
+                        db.Categories.Remove(foundCategory);
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(AppResources.MsgSaveError + ex.Message);
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(AppResources.MsgSaveError + ex.Message);
+                    Logger.Error($"ERROR-10: Не удалось удалить категорию.\n" +
+                                 $"Пользователь: {CurrentUser.User?.Login}\n" +
+                                 $"Категория: {categoryName}\n" +
+                                 $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
+                                 $"Стек: {ex.StackTrace}", ex);
+                    MessageBox.Show(AppResources.MsgSaveError + ex.Message, "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }

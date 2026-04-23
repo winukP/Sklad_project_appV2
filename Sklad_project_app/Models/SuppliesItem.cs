@@ -1,34 +1,36 @@
-﻿namespace Sklad_project_app.Models
+﻿using System;
+
+namespace Sklad_project_app.Models
 {
     /// <summary>
-    ///  Детали отгрузки
+    /// Детали поставки
     /// </summary>
-    public class ShipmentItem
+    public class SuppliesItem
     {
         /// <summary>
         /// Уникальный идентификатор записи
         /// </summary>
         public Guid Id { get; set; }
         /// <summary>
-        /// ID отгрузки (внешний ключ)
+        /// >ID поставки (внешний ключ)
         /// </summary>
-        public Guid ShipmentId { get; set; }
+        public Guid SuppliesId { get; set; }
         /// <summary>
         /// ID товара (внешний ключ)
         /// </summary>
         public Guid ProductId { get; set; }
         /// <summary>
-        /// Количество отгруженного товара
+        /// Количество товара в поставке
         /// </summary>
         public int Quantity { get; set; }
         /// <summary>
-        /// Общая сумма по позиции
+        /// Цена закупки (в рублях)
         /// </summary>
-        public decimal Amount { get; set; }
+        public decimal PurchasePrice { get; set; }
         /// <summary>
-        /// Шапка отгрузки (навигационное свойство)
+        /// Шапка поставки (навигационное свойство)
         /// </summary>
-        public virtual Shipment Shipment { get; set; }
+        public virtual Supplies Supplies { get; set; }
         /// <summary>
         /// Товар (навигационное свойство)
         /// </summary>

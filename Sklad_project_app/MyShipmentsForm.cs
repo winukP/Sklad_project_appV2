@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sklad_project_app.Сurrency;
 
 namespace Sklad_project_app
 {
@@ -14,15 +15,18 @@ namespace Sklad_project_app
             LoadMyShipments();
         }
 
-        private void LoadMyShipments()
+        public void LoadMyShipments()
         {
             using (var db = new SkladContext())
             {
                 var currentUserId = CurrentUser.User.Id;
 
                 var allShipments = db.Shipments
-                    .Include("Client")
-                    .Include("ShipmentItems")
+                    .Include(s => s.Client)
+                    .Include(s => s.ShipmentItems)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Stock)
+                    .OrderBy(s => s.ShipmentDate)
                     .ToList();
 
                 dgvMyShipments.Rows.Clear();
@@ -31,7 +35,9 @@ namespace Sklad_project_app
                 dgvMyShipments.Columns.Add("colClient", "Клиент");
                 dgvMyShipments.Columns.Add("colDate", "Дата");
                 dgvMyShipments.Columns.Add("colItems", "Товаров");
+                dgvMyShipments.Columns.Add("colTotal", "Сумма");
 
+                var number = 1;
                 foreach (var shipment in allShipments)
                 {
                     if (shipment.UserId != currentUserId)
@@ -41,7 +47,8 @@ namespace Sklad_project_app
 
                     var clientName = "—";
                     var date = "—";
-                    int itemCount = 0;
+                    var itemCount = 0;
+                    decimal totalAmount = 0;
 
                     if (shipment.Client != null)
                     {
@@ -55,8 +62,10 @@ namespace Sklad_project_app
                     {
                         itemCount = shipment.ShipmentItems.Count;
                     }
+                    totalAmount = shipment.ShipmentItems?.Sum(i => i.Amount) ?? 0;
 
-                    dgvMyShipments.Rows.Add(shipment.Id, clientName, date, itemCount);
+                    dgvMyShipments.Rows.Add(number, clientName, date, itemCount, CurrencyHelp.Format(totalAmount), shipment.Id);
+                    number++;
                 }
             }
         }

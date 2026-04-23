@@ -43,6 +43,7 @@ namespace Sklad_project_app
                 var allUsers = db.Users.Include("Role").ToList();
                 User foundUser = null;
 
+
                 foreach (var user in allUsers)
                 {
                     var userLogin = "";
@@ -67,9 +68,24 @@ namespace Sklad_project_app
                 if (foundUser == null)
                 {
                     MessageBox.Show(AppResources.MsgWrongLogin);
+                    var userExists = allUsers.Any(u => u.Login != null && u.Login.Trim() == login);
+                    if (userExists)
+                    {
+                        Logger.Warn($"WARN-01: Неудачная попытка авторизации --- неверный пароль.\n" +
+                                    $"Логин: {login}\n" +
+                                    $"Время: {DateTime.Now}");
+                    }
+                    else
+                    {
+                        Logger.Warn($"WARN-02: Неудачная попытка авторизации --- логин не найден.\n" +
+                                    $"Введённый логин: {login}\n" +
+                                    $"Время: {DateTime.Now}");
+                    }
                     return;
                 }
-
+                Logger.Debug($"DEBUG-01: Пользователь успешно авторизован.\n" +
+                    $"Логин: {foundUser.Login} | Роль: {foundUser.Role.RoleName} | UserId: {foundUser.Id}\n" +
+                    $"Время: {DateTime.Now}");
                 CurrentUser.User = foundUser;
                 CurrentUser.RoleName = foundUser.Role.RoleName;
 
