@@ -50,11 +50,11 @@ namespace Sklad_project_app
             // 
             // panelTop
             // 
+            panelTop.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panelTop.BackColor = Color.FromArgb(30, 100, 200);
             panelTop.Controls.Add(lblCompany);
             panelTop.Controls.Add(lblUserInfo);
             panelTop.Controls.Add(btnLogout);
-            panelTop.Dock = DockStyle.Top;
             panelTop.Location = new Point(0, 0);
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(1100, 35);
@@ -84,6 +84,7 @@ namespace Sklad_project_app
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 3);
@@ -92,6 +93,7 @@ namespace Sklad_project_app
             btnLogout.TabIndex = 2;
             btnLogout.Text = "Выход";
             btnLogout.UseVisualStyleBackColor = false;
+            btnLogout.Click += btnLogout_Click;
             // 
             // lblWarning
             // 
@@ -106,6 +108,7 @@ namespace Sklad_project_app
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(50, 50, 50);
             panelLeft.Controls.Add(lblShipTitle);
             panelLeft.Controls.Add(lblClient);
@@ -151,7 +154,6 @@ namespace Sklad_project_app
             txtClientName.Name = "txtClientName";
             txtClientName.Size = new Size(130, 27);
             txtClientName.TabIndex = 2;
-            txtClientName.TextChanged += txtClientName_TextChanged;
             // 
             // lblDate
             // 
@@ -212,6 +214,8 @@ namespace Sklad_project_app
             // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnRefresh);
             panelActions.Controls.Add(lblWarning);
@@ -235,6 +239,8 @@ namespace Sklad_project_app
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(lblSearch);
             panelFilters.Controls.Add(txtSearch);
@@ -328,6 +334,7 @@ namespace Sklad_project_app
             // 
             dgvShipment.AllowUserToAddRows = false;
             dgvShipment.AllowUserToDeleteRows = false;
+            dgvShipment.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvShipment.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvShipment.BackgroundColor = Color.White;
             dgvShipment.BorderStyle = BorderStyle.None;
@@ -363,6 +370,7 @@ namespace Sklad_project_app
             Name = "ShipmentForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Отгрузка - Кладовщик";
+            WindowState = FormWindowState.Maximized;
             Load += ShipmentForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -374,6 +382,7 @@ namespace Sklad_project_app
             panelFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvShipment).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Panel panelTop;

@@ -17,12 +17,40 @@ namespace Sklad_project_app
         {
             InitializeComponent();
             LoadProductsToComboBox();
+            ConfigureAccessByRole();
             LoadSupplies();
             this.Text = AppResources.CatalogTitle;
             lblUserInfo.Text = AppResources.LblStorekeeper
                 + CurrentUser.User.Surname + " " + CurrentUser.User.Name;
         }
-       
+        private void ConfigureAccessByRole()
+        {
+            bool isAdmin = CurrentUser.RoleName == "Администратор";
+            bool isStorekeeper = CurrentUser.RoleName == "Кладовщик";
+            btnReports.Visible = isAdmin;
+            btnExpirationDates.Visible = isAdmin;
+            btnCurrency.Visible = isAdmin;
+            btnHistory.Visible = isAdmin;
+            btnSuplies.Visible = true;
+            btnShipment.Visible = isStorekeeper;
+            btnMyShipments.Visible = isStorekeeper;
+            btnWrittenOff.Visible = true;
+            if (isAdmin)
+            {
+                btnWrittenOff.Location = new Point(5, 194);
+                btnHistory.Location = new Point(5, 48);
+                btnSuplies.Location = new Point(5, 86);
+                btnReports.Location = new Point(5, 122);
+                btnExpirationDates.Location = new Point(5, 158);
+                btnCurrency.Location = new Point(5, 229);
+            }
+            else if (isStorekeeper)
+            {
+                btnWrittenOff.Location = new Point(5, 158);
+                btnSuplies.Location = new Point(5, 122);
+            }
+            btnWrittenOff.Parent?.PerformLayout();
+        }
         private void LoadProductsToComboBox()
         {
             using (var db = new SkladContext())
@@ -382,9 +410,15 @@ namespace Sklad_project_app
         {
             CurrentUser.User = null;
             CurrentUser.RoleName = null;
-            var loginForm = new LoginForm();
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
             loginForm.Show();
-            this.Close();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
 
         private void btnCatalog_Click(object sender, EventArgs e)
@@ -434,13 +468,8 @@ namespace Sklad_project_app
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            var settingsForm = new CurrencyForm();
-            settingsForm.ShowDialog();
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
             this.Close();
         }
 
@@ -779,7 +808,28 @@ namespace Sklad_project_app
 
         private void txtExpirationDate_TextChanged(object sender, EventArgs e)
         {
-           
+
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
+            this.Close();
+        }
+
+        private void btnCurrency_Click(object sender, EventArgs e)
+        {
+            var currencyform = new CurrencyForm();
+            currencyform.ShowDialog();
+            this.Close();
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            var form = new ShipmentHistoryForm();
+            form.ShowDialog();
+            this.Close();
         }
     }
 

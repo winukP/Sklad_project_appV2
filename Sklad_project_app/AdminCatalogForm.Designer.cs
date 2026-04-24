@@ -21,7 +21,8 @@ namespace Sklad_project_app
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
-            btnSettings = new Button();
+            btnCurrency = new Button();
+            btnWrittenOff = new Button();
             btnExpirationDates = new Button();
             btnReports = new Button();
             btnSuplies = new Button();
@@ -107,6 +108,7 @@ namespace Sklad_project_app
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 2);
@@ -119,30 +121,43 @@ namespace Sklad_project_app
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
-            panelLeft.Controls.Add(btnSettings);
+            panelLeft.Controls.Add(btnCurrency);
+            panelLeft.Controls.Add(btnWrittenOff);
             panelLeft.Controls.Add(btnExpirationDates);
             panelLeft.Controls.Add(btnReports);
             panelLeft.Controls.Add(btnSuplies);
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnCategories);
             panelLeft.Controls.Add(btnHistory);
-            panelLeft.Location = new Point(226, 199);
+            panelLeft.Location = new Point(0, 35);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
             // 
-            // btnSettings
+            // btnCurrency
             // 
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.ImageAlign = ContentAlignment.TopCenter;
-            btnSettings.Location = new Point(5, 230);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new Size(128, 30);
-            btnSettings.TabIndex = 7;
-            btnSettings.Text = "Настройки";
-            btnSettings.Click += btnSettings_Click;
+            btnCurrency.FlatStyle = FlatStyle.Flat;
+            btnCurrency.ImageAlign = ContentAlignment.TopCenter;
+            btnCurrency.Location = new Point(5, 266);
+            btnCurrency.Name = "btnCurrency";
+            btnCurrency.Size = new Size(128, 30);
+            btnCurrency.TabIndex = 10;
+            btnCurrency.Text = "Валюта";
+            btnCurrency.Click += btnCurrency_Click;
+            // 
+            // btnWrittenOff
+            // 
+            btnWrittenOff.FlatStyle = FlatStyle.Flat;
+            btnWrittenOff.ImageAlign = ContentAlignment.TopCenter;
+            btnWrittenOff.Location = new Point(5, 229);
+            btnWrittenOff.Name = "btnWrittenOff";
+            btnWrittenOff.Size = new Size(129, 30);
+            btnWrittenOff.TabIndex = 9;
+            btnWrittenOff.Text = "Списанное";
+            btnWrittenOff.Click += btnWrittenOff_Click;
             // 
             // btnExpirationDates
             // 
@@ -211,6 +226,8 @@ namespace Sklad_project_app
             // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnAdd);
             panelActions.Controls.Add(btnEdit);
@@ -289,6 +306,8 @@ namespace Sklad_project_app
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(lblSearch);
             panelFilters.Controls.Add(txtSearch);
@@ -413,6 +432,7 @@ namespace Sklad_project_app
             // 
             dgvProducts.AllowUserToAddRows = false;
             dgvProducts.AllowUserToDeleteRows = false;
+            dgvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
@@ -634,6 +654,7 @@ namespace Sklad_project_app
             Name = "AdminCatalogForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Каталог товаров - Администратор";
+            WindowState = FormWindowState.Maximized;
             Load += AdminCatalogForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -645,6 +666,7 @@ namespace Sklad_project_app
             panelEdit.ResumeLayout(false);
             panelEdit.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         internal System.Windows.Forms.Panel panelTop;
@@ -693,6 +715,7 @@ namespace Sklad_project_app
         private Button btnSuplies;
         private Button btnReports;
         private Button btnExpirationDates;
-        private Button btnSettings;
+        private Button btnWrittenOff;
+        private Button btnCurrency;
     }
 }

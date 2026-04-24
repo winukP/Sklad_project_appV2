@@ -19,7 +19,9 @@
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
-            btnSettings = new Button();
+            btnHistory = new Button();
+            btnCurrency = new Button();
+            btnWrittenOff = new Button();
             btnExpirationDates = new Button();
             btnReports = new Button();
             btnSuplies = new Button();
@@ -108,6 +110,7 @@
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 2);
@@ -120,30 +123,54 @@
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
-            panelLeft.Controls.Add(btnSettings);
+            panelLeft.Controls.Add(btnHistory);
+            panelLeft.Controls.Add(btnCurrency);
+            panelLeft.Controls.Add(btnWrittenOff);
             panelLeft.Controls.Add(btnExpirationDates);
             panelLeft.Controls.Add(btnReports);
             panelLeft.Controls.Add(btnSuplies);
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnShipment);
             panelLeft.Controls.Add(btnMyShipments);
-            panelLeft.Location = new Point(237, 223);
+            panelLeft.Location = new Point(0, 35);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
             // 
-            // btnSettings
+            // btnHistory
             // 
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.ImageAlign = ContentAlignment.TopCenter;
-            btnSettings.Location = new Point(5, 230);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new Size(128, 30);
-            btnSettings.TabIndex = 6;
-            btnSettings.Text = "Настройки";
-            btnSettings.Click += btnSettings_Click;
+            btnHistory.FlatStyle = FlatStyle.Flat;
+            btnHistory.Location = new Point(7, 299);
+            btnHistory.Name = "btnHistory";
+            btnHistory.Size = new Size(128, 30);
+            btnHistory.TabIndex = 10;
+            btnHistory.Text = "История отгрузок";
+            btnHistory.Click += btnHistory_Click;
+            // 
+            // btnCurrency
+            // 
+            btnCurrency.FlatStyle = FlatStyle.Flat;
+            btnCurrency.ImageAlign = ContentAlignment.TopCenter;
+            btnCurrency.Location = new Point(5, 265);
+            btnCurrency.Name = "btnCurrency";
+            btnCurrency.Size = new Size(128, 30);
+            btnCurrency.TabIndex = 9;
+            btnCurrency.Text = "Валюта";
+            btnCurrency.Click += btnCurrency_Click;
+            // 
+            // btnWrittenOff
+            // 
+            btnWrittenOff.FlatStyle = FlatStyle.Flat;
+            btnWrittenOff.ImageAlign = ContentAlignment.TopCenter;
+            btnWrittenOff.Location = new Point(5, 229);
+            btnWrittenOff.Name = "btnWrittenOff";
+            btnWrittenOff.Size = new Size(129, 30);
+            btnWrittenOff.TabIndex = 8;
+            btnWrittenOff.Text = "Списанное";
+            btnWrittenOff.Click += btnWrittenOff_Click;
             // 
             // btnExpirationDates
             // 
@@ -212,6 +239,8 @@
             // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnImport);
             panelActions.Controls.Add(btnAddComing);
@@ -276,6 +305,8 @@
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(lblSearch);
             panelFilters.Controls.Add(txtSearch);
@@ -401,6 +432,7 @@
             // 
             dgvProducts.AllowUserToAddRows = false;
             dgvProducts.AllowUserToDeleteRows = false;
+            dgvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
@@ -673,6 +705,7 @@
             Name = "SuppliesForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Поставки";
+            WindowState = FormWindowState.Maximized;
             Load += SuppliesCatalogForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -684,6 +717,7 @@
             panelView.ResumeLayout(false);
             panelView.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Panel panelTop;
@@ -725,7 +759,6 @@
         private Button btnSuplies;
         private Button btnReports;
         private Button btnExpirationDates;
-        private Button btnSettings;
         private Button btnImport;
         private Button btnAddComing;
         private DateTimePicker dtpDate;
@@ -736,5 +769,8 @@
         private Label lblArticleEdit;
         private Label lblExpirationDate;
         private TextBox txtExpirationDate;
+        private Button btnWrittenOff;
+        private Button btnCurrency;
+        private Button btnHistory;
     }
 }

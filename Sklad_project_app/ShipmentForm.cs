@@ -497,11 +497,6 @@ namespace Sklad_project_app
             LoadProducts();
         }
 
-        private void txtClientName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void dgvShipment_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -596,6 +591,21 @@ namespace Sklad_project_app
             }
 
             UpdateTotal();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            CurrentUser.User = null;
+            CurrentUser.RoleName = null;
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
+            loginForm.Show();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
     }
 }

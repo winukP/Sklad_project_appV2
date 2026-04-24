@@ -277,27 +277,20 @@ namespace Sklad_project_app
         {
             CurrentUser.User = null;
             CurrentUser.RoleName = null;
-            var loginForm = new LoginForm();
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
             loginForm.Show();
-            this.Close();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
 
         private void btnCatalog_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void btnShipment_Click(object sender, EventArgs e)
-        {
-            var form = new ShipmentForm();
-            form.ShowDialog();
-            LoadReports();
-        }
-
-        private void btnMyShipments_Click(object sender, EventArgs e)
-        {
-            var form = new MyShipmentsForm();
-            form.ShowDialog();
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -306,11 +299,6 @@ namespace Sklad_project_app
         }
 
         private void cmbCategory_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LoadReports();
-        }
-
-        private void cmbAvailability_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadReports();
         }
@@ -329,7 +317,9 @@ namespace Sklad_project_app
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
+            this.Close();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -357,6 +347,31 @@ namespace Sklad_project_app
         private void txtProfitFrom_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
+            this.Close();
+        }
+
+        private void btnCategories_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            var form = new ShipmentHistoryForm();
+            form.ShowDialog();
+        }
+
+        private void btnCurrency_Click(object sender, EventArgs e)
+        {
+            var currencyform = new CurrencyForm();
+            currencyform.ShowDialog();
+            this.Close();
         }
     }
 }

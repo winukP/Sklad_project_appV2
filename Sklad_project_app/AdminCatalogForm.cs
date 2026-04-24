@@ -801,13 +801,26 @@ namespace Sklad_project_app
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
             var settingsForm = new CurrencyForm();
             settingsForm.ShowDialog();
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
+        }
+
+        private void btnCurrency_Click(object sender, EventArgs e)
+        {
+            var currencyform = new CurrencyForm();
+            currencyform.ShowDialog();
         }
     }
 }

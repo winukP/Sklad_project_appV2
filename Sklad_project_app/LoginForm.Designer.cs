@@ -143,6 +143,7 @@
             ClientSize = new Size(800, 500);
             Controls.Add(panelTop);
             Controls.Add(panelLogin);
+            MaximizeBox = false;
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Авторизация";

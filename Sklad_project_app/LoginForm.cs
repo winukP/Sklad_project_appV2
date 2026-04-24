@@ -10,7 +10,14 @@ namespace Sklad_project_app
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Очищает поля при выходе
+        /// </summary>
+        public void ClearFields()
+        {
+            txtLogin.Text = "";
+            txtPassword.Text = "";
+        }
         private void LoginForm_Load(object sender, EventArgs e)
         {
             try

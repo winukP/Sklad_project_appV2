@@ -148,9 +148,15 @@ namespace Sklad_project_app
         {
             CurrentUser.User = null;
             CurrentUser.RoleName = null;
-            var loginForm = new LoginForm();
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
             loginForm.Show();
-            this.Close();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
 
         private void btnCatalog_Click(object sender, EventArgs e)
@@ -205,22 +211,28 @@ namespace Sklad_project_app
         {
             var suppliesForm = new SuppliesForm();
             suppliesForm.ShowDialog();
+            this.Close();
         }
 
         private void btnReports_Click(object sender, EventArgs e)
         {
             var reportsForm = new ReportsForm();
             reportsForm.ShowDialog();
+            this.Close();
         }
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
+            this.Close();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-
+            var currencyform = new CurrencyForm();
+            currencyform.ShowDialog();
+            this.Close();
         }
 
         private void txtPriceFrom_TextChanged(object sender, EventArgs e)
@@ -272,6 +284,19 @@ namespace Sklad_project_app
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             MessageBox.Show($"Валюта изменена на {currencyCode}");
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
+            this.Close();
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            var form = new ShipmentHistoryForm();
+            form.ShowDialog();
         }
     }
 }

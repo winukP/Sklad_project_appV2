@@ -13,46 +13,60 @@
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.dgvMyShipments = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvMyShipments)).BeginInit();
-            this.SuspendLayout();
-
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            lblTitle = new Label();
+            dgvMyShipments = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dgvMyShipments).BeginInit();
+            SuspendLayout();
+            // 
             // lblTitle
-            this.lblTitle.AutoSize = false;
-            this.lblTitle.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(10, 10);
-            this.lblTitle.Size = new System.Drawing.Size(560, 25);
-            this.lblTitle.Text = "Мои отгрузки";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
+            // 
+            lblTitle.Font = new Font("Arial", 12F, FontStyle.Bold);
+            lblTitle.Location = new Point(10, 10);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(560, 25);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Мои отгрузки";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // dgvMyShipments
-            this.dgvMyShipments.Location = new System.Drawing.Point(10, 45);
-            this.dgvMyShipments.Size = new System.Drawing.Size(560, 400);
-            this.dgvMyShipments.BackgroundColor = System.Drawing.Color.White;
-            this.dgvMyShipments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.dgvMyShipments.RowHeadersVisible = false;
-            this.dgvMyShipments.AllowUserToAddRows = false;
-            this.dgvMyShipments.AllowUserToDeleteRows = false;
-            this.dgvMyShipments.ReadOnly = true;
-            this.dgvMyShipments.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvMyShipments.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvMyShipments.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(50, 50, 50);
-            this.dgvMyShipments.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            this.dgvMyShipments.EnableHeadersVisualStyles = false;
-
+            // 
+            dgvMyShipments.AllowUserToAddRows = false;
+            dgvMyShipments.AllowUserToDeleteRows = false;
+            dgvMyShipments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvMyShipments.BackgroundColor = Color.White;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvMyShipments.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvMyShipments.ColumnHeadersHeight = 29;
+            dgvMyShipments.EnableHeadersVisualStyles = false;
+            dgvMyShipments.Location = new Point(10, 45);
+            dgvMyShipments.Name = "dgvMyShipments";
+            dgvMyShipments.ReadOnly = true;
+            dgvMyShipments.RowHeadersVisible = false;
+            dgvMyShipments.RowHeadersWidth = 51;
+            dgvMyShipments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvMyShipments.Size = new Size(560, 400);
+            dgvMyShipments.TabIndex = 1;
+            // 
             // MyShipmentsForm
-            this.ClientSize = new System.Drawing.Size(580, 460);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.dgvMyShipments);
-            this.Text = "Мои отгрузки";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.BackColor = System.Drawing.Color.White;
-            this.Load += new System.EventHandler(this.MyShipmentsForm_Load);
-
-            ((System.ComponentModel.ISupportInitialize)(this.dgvMyShipments)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            // 
+            BackColor = Color.White;
+            ClientSize = new Size(580, 460);
+            Controls.Add(lblTitle);
+            Controls.Add(dgvMyShipments);
+            MaximizeBox = false;
+            Name = "MyShipmentsForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Мои отгрузки";
+            Load += MyShipmentsForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvMyShipments).EndInit();
+            ResumeLayout(false);
         }
 
         private System.Windows.Forms.Label lblTitle;

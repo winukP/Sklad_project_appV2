@@ -13,19 +13,19 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
-            btnSettings = new Button();
+            btnCurrency = new Button();
+            btnHistory = new Button();
+            btnWrittenOff = new Button();
             btnExpirationDates = new Button();
             btnReports = new Button();
             btnSuplies = new Button();
             btnCatalog = new Button();
-            btnShipment = new Button();
-            btnMyShipments = new Button();
             panelActions = new Panel();
             btnExport = new Button();
             btnRefresh = new Button();
@@ -100,6 +100,7 @@
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 2);
@@ -112,36 +113,58 @@
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
-            panelLeft.Controls.Add(btnSettings);
+            panelLeft.Controls.Add(btnCurrency);
+            panelLeft.Controls.Add(btnHistory);
+            panelLeft.Controls.Add(btnWrittenOff);
             panelLeft.Controls.Add(btnExpirationDates);
             panelLeft.Controls.Add(btnReports);
             panelLeft.Controls.Add(btnSuplies);
             panelLeft.Controls.Add(btnCatalog);
-            panelLeft.Controls.Add(btnShipment);
-            panelLeft.Controls.Add(btnMyShipments);
             panelLeft.Location = new Point(0, 35);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
             // 
-            // btnSettings
+            // btnCurrency
             // 
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.ImageAlign = ContentAlignment.TopCenter;
-            btnSettings.Location = new Point(5, 230);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new Size(128, 30);
-            btnSettings.TabIndex = 6;
-            btnSettings.Text = "Настройки";
-            btnSettings.Click += btnSettings_Click;
+            btnCurrency.FlatStyle = FlatStyle.Flat;
+            btnCurrency.ImageAlign = ContentAlignment.TopCenter;
+            btnCurrency.Location = new Point(5, 229);
+            btnCurrency.Name = "btnCurrency";
+            btnCurrency.Size = new Size(128, 30);
+            btnCurrency.TabIndex = 11;
+            btnCurrency.Text = "Валюта";
+            btnCurrency.Click += btnCurrency_Click;
+            // 
+            // btnHistory
+            // 
+            btnHistory.FlatStyle = FlatStyle.Flat;
+            btnHistory.Location = new Point(6, 48);
+            btnHistory.Name = "btnHistory";
+            btnHistory.Size = new Size(128, 30);
+            btnHistory.TabIndex = 10;
+            btnHistory.Text = "История отгрузок";
+            btnHistory.Click += btnHistory_Click;
+            // 
+            // btnWrittenOff
+            // 
+            btnWrittenOff.FlatStyle = FlatStyle.Flat;
+            btnWrittenOff.ImageAlign = ContentAlignment.TopCenter;
+            btnWrittenOff.Location = new Point(5, 194);
+            btnWrittenOff.Name = "btnWrittenOff";
+            btnWrittenOff.Size = new Size(129, 30);
+            btnWrittenOff.TabIndex = 8;
+            btnWrittenOff.Text = "Списанное";
+            btnWrittenOff.Click += btnWrittenOff_Click;
             // 
             // btnExpirationDates
             // 
             btnExpirationDates.FlatStyle = FlatStyle.Flat;
             btnExpirationDates.ImageAlign = ContentAlignment.TopCenter;
-            btnExpirationDates.Location = new Point(5, 194);
+            btnExpirationDates.Location = new Point(5, 158);
             btnExpirationDates.Name = "btnExpirationDates";
             btnExpirationDates.Size = new Size(129, 30);
             btnExpirationDates.TabIndex = 5;
@@ -152,7 +175,7 @@
             // 
             btnReports.FlatStyle = FlatStyle.Flat;
             btnReports.ImageAlign = ContentAlignment.TopCenter;
-            btnReports.Location = new Point(6, 158);
+            btnReports.Location = new Point(5, 122);
             btnReports.Name = "btnReports";
             btnReports.Size = new Size(128, 30);
             btnReports.TabIndex = 4;
@@ -162,7 +185,7 @@
             // btnSuplies
             // 
             btnSuplies.FlatStyle = FlatStyle.Flat;
-            btnSuplies.Location = new Point(5, 122);
+            btnSuplies.Location = new Point(5, 86);
             btnSuplies.Name = "btnSuplies";
             btnSuplies.Size = new Size(128, 30);
             btnSuplies.TabIndex = 3;
@@ -182,28 +205,10 @@
             btnCatalog.UseVisualStyleBackColor = false;
             btnCatalog.Click += btnCatalog_Click;
             // 
-            // btnShipment
-            // 
-            btnShipment.FlatStyle = FlatStyle.Flat;
-            btnShipment.Location = new Point(5, 48);
-            btnShipment.Name = "btnShipment";
-            btnShipment.Size = new Size(128, 30);
-            btnShipment.TabIndex = 1;
-            btnShipment.Text = "Отгрузка";
-            btnShipment.Click += btnShipment_Click;
-            // 
-            // btnMyShipments
-            // 
-            btnMyShipments.FlatStyle = FlatStyle.Flat;
-            btnMyShipments.Location = new Point(5, 86);
-            btnMyShipments.Name = "btnMyShipments";
-            btnMyShipments.Size = new Size(128, 30);
-            btnMyShipments.TabIndex = 2;
-            btnMyShipments.Text = "Мои отгрузки";
-            btnMyShipments.Click += btnMyShipments_Click;
-            // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnExport);
             panelActions.Controls.Add(btnRefresh);
@@ -240,6 +245,8 @@
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(label1);
             panelFilters.Controls.Add(dtpDateTo);
@@ -352,17 +359,18 @@
             // 
             dgvReports.AllowUserToAddRows = false;
             dgvReports.AllowUserToDeleteRows = false;
+            dgvReports.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvReports.BackgroundColor = Color.White;
             dgvReports.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvReports.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvReports.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvReports.ColumnHeadersHeight = 29;
             dgvReports.EnableHeadersVisualStyles = false;
             dgvReports.Location = new Point(140, 180);
@@ -566,7 +574,8 @@
             Controls.Add(dgvReports);
             Name = "ReportsForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Каталог товаров - Кладовщик";
+            Text = "Отчеты";
+            WindowState = FormWindowState.Maximized;
             Load += ReportsForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -578,6 +587,7 @@
             panelView.ResumeLayout(false);
             panelView.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Panel panelTop;
@@ -586,8 +596,6 @@
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Panel panelLeft;
         private System.Windows.Forms.Button btnCatalog;
-        private System.Windows.Forms.Button btnShipment;
-        private System.Windows.Forms.Button btnMyShipments;
         private System.Windows.Forms.Panel panelActions;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnRefresh;
@@ -618,9 +626,11 @@
         private Button btnSuplies;
         private Button btnReports;
         private Button btnExpirationDates;
-        private Button btnSettings;
         private DateTimePicker dtpDateFrom;
         private DateTimePicker dtpDateTo;
         private Label label1;
+        private Button btnWrittenOff;
+        private Button btnHistory;
+        private Button btnCurrency;
     }
 }

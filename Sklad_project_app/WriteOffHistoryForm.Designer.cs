@@ -19,7 +19,9 @@
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
-            btnSettings = new Button();
+            btnHistory = new Button();
+            btnCurrency = new Button();
+            btnWrittenOff = new Button();
             btnExpirationDates = new Button();
             btnReports = new Button();
             btnSuplies = new Button();
@@ -84,6 +86,7 @@
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 2);
@@ -96,9 +99,12 @@
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
-            panelLeft.Controls.Add(btnSettings);
+            panelLeft.Controls.Add(btnHistory);
+            panelLeft.Controls.Add(btnCurrency);
+            panelLeft.Controls.Add(btnWrittenOff);
             panelLeft.Controls.Add(btnExpirationDates);
             panelLeft.Controls.Add(btnReports);
             panelLeft.Controls.Add(btnSuplies);
@@ -110,16 +116,37 @@
             panelLeft.Size = new Size(140, 565);
             panelLeft.TabIndex = 1;
             // 
-            // btnSettings
+            // btnHistory
             // 
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.ImageAlign = ContentAlignment.TopCenter;
-            btnSettings.Location = new Point(5, 230);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new Size(128, 30);
-            btnSettings.TabIndex = 6;
-            btnSettings.Text = "Настройки";
-            btnSettings.Click += btnSettings_Click;
+            btnHistory.FlatStyle = FlatStyle.Flat;
+            btnHistory.Location = new Point(6, 302);
+            btnHistory.Name = "btnHistory";
+            btnHistory.Size = new Size(128, 30);
+            btnHistory.TabIndex = 11;
+            btnHistory.Text = "История отгрузок";
+            btnHistory.Click += btnHistory_Click;
+            // 
+            // btnCurrency
+            // 
+            btnCurrency.FlatStyle = FlatStyle.Flat;
+            btnCurrency.ImageAlign = ContentAlignment.TopCenter;
+            btnCurrency.Location = new Point(6, 266);
+            btnCurrency.Name = "btnCurrency";
+            btnCurrency.Size = new Size(128, 30);
+            btnCurrency.TabIndex = 10;
+            btnCurrency.Text = "Валюта";
+            btnCurrency.Click += btnCurrency_Click;
+            // 
+            // btnWrittenOff
+            // 
+            btnWrittenOff.FlatStyle = FlatStyle.Flat;
+            btnWrittenOff.ImageAlign = ContentAlignment.TopCenter;
+            btnWrittenOff.Location = new Point(5, 230);
+            btnWrittenOff.Name = "btnWrittenOff";
+            btnWrittenOff.Size = new Size(129, 30);
+            btnWrittenOff.TabIndex = 9;
+            btnWrittenOff.Text = "Списанное";
+            btnWrittenOff.Click += btnWrittenOff_Click;
             // 
             // btnExpirationDates
             // 
@@ -188,6 +215,8 @@
             // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnRefresh);
             panelActions.Location = new Point(140, 35);
@@ -210,6 +239,8 @@
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(lblSearch);
             panelFilters.Controls.Add(txtSearch);
@@ -300,7 +331,6 @@
             txtLossFrom.Size = new Size(70, 27);
             txtLossFrom.TabIndex = 7;
             txtLossFrom.Text = "0";
-            txtLossFrom.TextChanged += txtPriceFrom_TextChanged;
             // 
             // txtLossTo
             // 
@@ -309,7 +339,6 @@
             txtLossTo.Size = new Size(70, 27);
             txtLossTo.TabIndex = 8;
             txtLossTo.Text = "1000000";
-            txtLossTo.TextChanged += txtPriceTo_TextChanged;
             // 
             // lblFound
             // 
@@ -335,6 +364,7 @@
             // 
             dgvWriteOffs.AllowUserToAddRows = false;
             dgvWriteOffs.AllowUserToDeleteRows = false;
+            dgvWriteOffs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvWriteOffs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvWriteOffs.BackgroundColor = Color.White;
             dgvWriteOffs.BorderStyle = BorderStyle.None;
@@ -369,7 +399,8 @@
             Controls.Add(dgvWriteOffs);
             Name = "WriteOffHistoryForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Поставки";
+            Text = "Списанное";
+            WindowState = FormWindowState.Maximized;
             Load += SuppliesCatalogForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -379,6 +410,7 @@
             panelFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvWriteOffs).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Panel panelTop;
@@ -407,6 +439,8 @@
         private Button btnSuplies;
         private Button btnReports;
         private Button btnExpirationDates;
-        private Button btnSettings;
+        private Button btnWrittenOff;
+        private Button btnCurrency;
+        private Button btnHistory;
     }
 }

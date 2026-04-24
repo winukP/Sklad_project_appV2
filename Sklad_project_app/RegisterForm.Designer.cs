@@ -169,6 +169,7 @@ namespace Sklad_project_app
             ClientSize = new Size(800, 500);
             Controls.Add(panelTop);
             Controls.Add(panelReg);
+            MaximizeBox = false;
             Name = "RegisterForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Регистрация";

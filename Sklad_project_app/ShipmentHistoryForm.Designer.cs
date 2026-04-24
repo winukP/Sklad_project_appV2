@@ -14,82 +14,116 @@ namespace Sklad_project_app
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lblShipments = new System.Windows.Forms.Label();
-            this.dgvHistory = new System.Windows.Forms.DataGridView();
-            this.lblItems = new System.Windows.Forms.Label();
-            this.dgvHistoryItems = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvHistory)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvHistoryItems)).BeginInit();
-            this.SuspendLayout();
-
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            lblTitle = new Label();
+            lblShipments = new Label();
+            dgvHistory = new DataGridView();
+            lblItems = new Label();
+            dgvHistoryItems = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dgvHistory).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvHistoryItems).BeginInit();
+            SuspendLayout();
+            // 
             // lblTitle
-            this.lblTitle.AutoSize = false;
-            this.lblTitle.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(10, 10);
-            this.lblTitle.Size = new System.Drawing.Size(760, 25);
-            this.lblTitle.Text = "История отгрузок";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
+            // 
+            lblTitle.Font = new Font("Arial", 12F, FontStyle.Bold);
+            lblTitle.Location = new Point(10, 10);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(760, 25);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "История отгрузок";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // lblShipments
-            this.lblShipments.AutoSize = true;
-            this.lblShipments.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
-            this.lblShipments.Location = new System.Drawing.Point(10, 42);
-            this.lblShipments.Text = "Список отгрузок:";
-
+            // 
+            lblShipments.AutoSize = true;
+            lblShipments.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblShipments.Location = new Point(10, 42);
+            lblShipments.Name = "lblShipments";
+            lblShipments.Size = new Size(131, 18);
+            lblShipments.TabIndex = 1;
+            lblShipments.Text = "Список отгрузок:";
+            // 
             // dgvHistory
-            this.dgvHistory.Location = new System.Drawing.Point(10, 60);
-            this.dgvHistory.Size = new System.Drawing.Size(760, 200);
-            this.dgvHistory.BackgroundColor = System.Drawing.Color.White;
-            this.dgvHistory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.dgvHistory.RowHeadersVisible = false;
-            this.dgvHistory.AllowUserToAddRows = false;
-            this.dgvHistory.AllowUserToDeleteRows = false;
-            this.dgvHistory.ReadOnly = true;
-            this.dgvHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvHistory.MultiSelect = false;
-            this.dgvHistory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(50, 50, 50);
-            this.dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            this.dgvHistory.EnableHeadersVisualStyles = false;
-            this.dgvHistory.SelectionChanged += new System.EventHandler(this.dgvHistory_SelectionChanged);
-
+            // 
+            dgvHistory.AllowUserToAddRows = false;
+            dgvHistory.AllowUserToDeleteRows = false;
+            dgvHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvHistory.BackgroundColor = Color.White;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvHistory.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvHistory.ColumnHeadersHeight = 29;
+            dgvHistory.EnableHeadersVisualStyles = false;
+            dgvHistory.Location = new Point(10, 60);
+            dgvHistory.MultiSelect = false;
+            dgvHistory.Name = "dgvHistory";
+            dgvHistory.ReadOnly = true;
+            dgvHistory.RowHeadersVisible = false;
+            dgvHistory.RowHeadersWidth = 51;
+            dgvHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvHistory.Size = new Size(760, 200);
+            dgvHistory.TabIndex = 2;
+            dgvHistory.SelectionChanged += dgvHistory_SelectionChanged;
+            // 
             // lblItems
-            this.lblItems.AutoSize = true;
-            this.lblItems.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
-            this.lblItems.Location = new System.Drawing.Point(10, 272);
-            this.lblItems.Text = "Товары в выбранной отгрузке:";
-
+            // 
+            lblItems.AutoSize = true;
+            lblItems.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblItems.Location = new Point(10, 272);
+            lblItems.Name = "lblItems";
+            lblItems.Size = new Size(235, 18);
+            lblItems.TabIndex = 3;
+            lblItems.Text = "Товары в выбранной отгрузке:";
+            // 
             // dgvHistoryItems
-            this.dgvHistoryItems.Location = new System.Drawing.Point(10, 290);
-            this.dgvHistoryItems.Size = new System.Drawing.Size(760, 200);
-            this.dgvHistoryItems.BackgroundColor = System.Drawing.Color.White;
-            this.dgvHistoryItems.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.dgvHistoryItems.RowHeadersVisible = false;
-            this.dgvHistoryItems.AllowUserToAddRows = false;
-            this.dgvHistoryItems.AllowUserToDeleteRows = false;
-            this.dgvHistoryItems.ReadOnly = true;
-            this.dgvHistoryItems.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvHistoryItems.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(50, 50, 50);
-            this.dgvHistoryItems.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            this.dgvHistoryItems.EnableHeadersVisualStyles = false;
-
+            // 
+            dgvHistoryItems.AllowUserToAddRows = false;
+            dgvHistoryItems.AllowUserToDeleteRows = false;
+            dgvHistoryItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvHistoryItems.BackgroundColor = Color.White;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvHistoryItems.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvHistoryItems.ColumnHeadersHeight = 29;
+            dgvHistoryItems.EnableHeadersVisualStyles = false;
+            dgvHistoryItems.Location = new Point(10, 290);
+            dgvHistoryItems.Name = "dgvHistoryItems";
+            dgvHistoryItems.ReadOnly = true;
+            dgvHistoryItems.RowHeadersVisible = false;
+            dgvHistoryItems.RowHeadersWidth = 51;
+            dgvHistoryItems.Size = new Size(760, 200);
+            dgvHistoryItems.TabIndex = 4;
+            // 
             // ShipmentHistoryForm
-            this.ClientSize = new System.Drawing.Size(780, 510);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.lblShipments);
-            this.Controls.Add(this.dgvHistory);
-            this.Controls.Add(this.lblItems);
-            this.Controls.Add(this.dgvHistoryItems);
-            this.Text = "История отгрузок";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.BackColor = System.Drawing.Color.White;
-            this.Load += new System.EventHandler(this.ShipmentHistoryForm_Load);
-
-            ((System.ComponentModel.ISupportInitialize)(this.dgvHistory)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvHistoryItems)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            // 
+            BackColor = Color.White;
+            ClientSize = new Size(780, 510);
+            Controls.Add(lblTitle);
+            Controls.Add(lblShipments);
+            Controls.Add(dgvHistory);
+            Controls.Add(lblItems);
+            Controls.Add(dgvHistoryItems);
+            MaximizeBox = false;
+            Name = "ShipmentHistoryForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "История отгрузок";
+            Load += ShipmentHistoryForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvHistory).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvHistoryItems).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Label lblTitle;

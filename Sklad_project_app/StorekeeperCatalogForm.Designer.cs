@@ -13,16 +13,13 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panelTop = new Panel();
             lblCompany = new Label();
             lblUserInfo = new Label();
             btnLogout = new Button();
             panelLeft = new Panel();
             btnWrittenOff = new Button();
-            btnSettings = new Button();
-            btnExpirationDates = new Button();
-            btnReports = new Button();
             btnSuplies = new Button();
             btnCatalog = new Button();
             btnShipment = new Button();
@@ -102,6 +99,7 @@
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.FromArgb(210, 220, 235);
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Location = new Point(1018, 2);
@@ -114,12 +112,10 @@
             // 
             // panelLeft
             // 
+            panelLeft.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelLeft.BackColor = Color.FromArgb(240, 240, 240);
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
             panelLeft.Controls.Add(btnWrittenOff);
-            panelLeft.Controls.Add(btnSettings);
-            panelLeft.Controls.Add(btnExpirationDates);
-            panelLeft.Controls.Add(btnReports);
             panelLeft.Controls.Add(btnSuplies);
             panelLeft.Controls.Add(btnCatalog);
             panelLeft.Controls.Add(btnShipment);
@@ -133,45 +129,12 @@
             // 
             btnWrittenOff.FlatStyle = FlatStyle.Flat;
             btnWrittenOff.ImageAlign = ContentAlignment.TopCenter;
-            btnWrittenOff.Location = new Point(5, 229);
+            btnWrittenOff.Location = new Point(5, 158);
             btnWrittenOff.Name = "btnWrittenOff";
             btnWrittenOff.Size = new Size(129, 30);
             btnWrittenOff.TabIndex = 7;
             btnWrittenOff.Text = "Списанное";
             btnWrittenOff.Click += btnWrittenOff_Click;
-            // 
-            // btnSettings
-            // 
-            btnSettings.FlatStyle = FlatStyle.Flat;
-            btnSettings.ImageAlign = ContentAlignment.TopCenter;
-            btnSettings.Location = new Point(5, 265);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new Size(128, 30);
-            btnSettings.TabIndex = 6;
-            btnSettings.Text = "Валюта";
-            btnSettings.Click += btnSettings_Click;
-            // 
-            // btnExpirationDates
-            // 
-            btnExpirationDates.FlatStyle = FlatStyle.Flat;
-            btnExpirationDates.ImageAlign = ContentAlignment.TopCenter;
-            btnExpirationDates.Location = new Point(5, 194);
-            btnExpirationDates.Name = "btnExpirationDates";
-            btnExpirationDates.Size = new Size(129, 30);
-            btnExpirationDates.TabIndex = 5;
-            btnExpirationDates.Text = "Сроки годности";
-            btnExpirationDates.Click += btnExpirationDates_Click;
-            // 
-            // btnReports
-            // 
-            btnReports.FlatStyle = FlatStyle.Flat;
-            btnReports.ImageAlign = ContentAlignment.TopCenter;
-            btnReports.Location = new Point(6, 158);
-            btnReports.Name = "btnReports";
-            btnReports.Size = new Size(128, 30);
-            btnReports.TabIndex = 4;
-            btnReports.Text = "Отчеты";
-            btnReports.Click += btnReports_Click;
             // 
             // btnSuplies
             // 
@@ -218,6 +181,8 @@
             // 
             // panelActions
             // 
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.AutoSize = true;
             panelActions.BackColor = Color.FromArgb(50, 50, 50);
             panelActions.Controls.Add(btnView);
             panelActions.Controls.Add(btnRefresh);
@@ -254,6 +219,8 @@
             // 
             // panelFilters
             // 
+            panelFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelFilters.AutoSize = true;
             panelFilters.BackColor = Color.FromArgb(230, 235, 245);
             panelFilters.Controls.Add(lblSearch);
             panelFilters.Controls.Add(txtSearch);
@@ -344,7 +311,6 @@
             txtPriceFrom.Size = new Size(70, 27);
             txtPriceFrom.TabIndex = 7;
             txtPriceFrom.Text = "0";
-            txtPriceFrom.TextChanged += txtPriceFrom_TextChanged;
             // 
             // txtPriceTo
             // 
@@ -378,17 +344,18 @@
             // 
             dgvProducts.AllowUserToAddRows = false;
             dgvProducts.AllowUserToDeleteRows = false;
+            dgvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProducts.BackgroundColor = Color.White;
             dgvProducts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(50, 50, 50);
-            dataGridViewCellStyle2.Font = new Font("Arial", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(50, 50, 50);
+            dataGridViewCellStyle1.Font = new Font("Arial", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvProducts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvProducts.ColumnHeadersHeight = 29;
             dgvProducts.EnableHeadersVisualStyles = false;
             dgvProducts.Location = new Point(140, 180);
@@ -593,6 +560,7 @@
             Name = "StorekeeperCatalogForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Каталог товаров - Кладовщик";
+            WindowState = FormWindowState.Maximized;
             Load += StorekeeperCatalogForm_Load;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
@@ -604,6 +572,7 @@
             panelView.ResumeLayout(false);
             panelView.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.Panel panelTop;
@@ -646,9 +615,6 @@
         private System.Windows.Forms.TextBox txtRestView;
         private System.Windows.Forms.Button btnCloseView;
         private Button btnSuplies;
-        private Button btnReports;
-        private Button btnExpirationDates;
-        private Button btnSettings;
         private Button btnWrittenOff;
     }
 }

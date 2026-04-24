@@ -91,7 +91,7 @@ namespace Sklad_project_app
                         }
                         else if (discount > 0)
                         {
-                            status = "Скидка есть"; 
+                            status = "Скидка есть";
                             Logger.Warn($"WARN-05: Товар приближается к истечению срока годности --- активирована скидка.\n" +
                                     $"Пользователь: {CurrentUser.User?.Login}\n" +
                                     $"ProductId: {batch.ProductId} | Название: {batch.Product?.Name}\n" +
@@ -164,9 +164,15 @@ namespace Sklad_project_app
         {
             CurrentUser.User = null;
             CurrentUser.RoleName = null;
-            var loginForm = new LoginForm();
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
             loginForm.Show();
-            this.Close();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
 
         private void btnCatalog_Click(object sender, EventArgs e)
@@ -204,7 +210,9 @@ namespace Sklad_project_app
 
         private void btnSuplies_Click(object sender, EventArgs e)
         {
-
+            var suppliesForm = new SuppliesForm();
+            suppliesForm.ShowDialog();
+            this.Close();
         }
 
         private void btnReports_Click(object sender, EventArgs e)
@@ -216,7 +224,9 @@ namespace Sklad_project_app
 
         private void btnExpirationDates_Click(object sender, EventArgs e)
         {
-
+            var expirationdates = new ExpirationDatesForm();
+            expirationdates.ShowDialog();
+            this.Close();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -320,6 +330,26 @@ namespace Sklad_project_app
                     }
                 }
             }
+        }
+
+        private void btnCurrency_Click(object sender, EventArgs e)
+        {
+            var currencyform = new CurrencyForm();
+            currencyform.ShowDialog();
+            this.Close();
+        }
+
+        private void btnWrittenOff_Click(object sender, EventArgs e)
+        {
+            var writeoffhistory = new WriteOffHistoryForm();
+            writeoffhistory.ShowDialog();
+            this.Close();
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            var form = new ShipmentHistoryForm();
+            form.ShowDialog();
         }
     }
 }

@@ -7,7 +7,6 @@ namespace Sklad_project_app
     public static class Logger
     {
         private static string _logPath = "logs.txt";
-        private static object _lock = new object();
 
         /// <summary>
         /// Уровни логирования
@@ -64,15 +63,12 @@ namespace Sklad_project_app
 
         private static void WriteLog(string level, string message)
         {
-            lock (_lock)
+            try
             {
-                try
-                {
-                    string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{level}] {message}";
-                    File.AppendAllText(_logPath, logEntry + Environment.NewLine);
-                }
-                catch { }
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{level}] {message}";
+                File.AppendAllText(_logPath, logEntry + Environment.NewLine);
             }
+            catch { }
         }
 
         /// <summary>

@@ -338,9 +338,15 @@ namespace Sklad_project_app
         {
             CurrentUser.User = null;
             CurrentUser.RoleName = null;
-            var loginForm = new LoginForm();
+            var loginForm = Application.OpenForms.OfType<LoginForm>().FirstOrDefault();
+            loginForm.ClearFields();
             loginForm.Show();
-            this.Close();
+            loginForm.BringToFront();
+            foreach (Form form in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (form != loginForm)
+                    form.Close();
+            }
         }
 
         private void btnCatalog_Click(object sender, EventArgs e)
@@ -382,29 +388,6 @@ namespace Sklad_project_app
             var suppliesForm = new SuppliesForm();
             suppliesForm.ShowDialog();
             LoadProducts();
-        }
-
-        private void btnReports_Click(object sender, EventArgs e)
-        {
-            var reportsForm = new ReportsForm();
-            reportsForm.ShowDialog();
-        }
-
-        private void btnExpirationDates_Click(object sender, EventArgs e)
-        {
-            var expirationdates = new ExpirationDatesForm();
-            expirationdates.ShowDialog();
-        }
-
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            var settingsForm = new CurrencyForm();
-            settingsForm.ShowDialog();
-        }
-
-        private void txtPriceFrom_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btnWrittenOff_Click(object sender, EventArgs e)
