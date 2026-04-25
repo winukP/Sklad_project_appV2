@@ -117,11 +117,9 @@ namespace Sklad_project_app
                         decimal shipmentProfit = 0;
                         foreach (var item in shipment.ShipmentItems)
                         {
-                            // ★★★ СУММА ИЗ КАТАЛОГА (для фильтрации) ★★★
                             decimal catalogPrice = item.Product?.Stock?.PurchasePrice ?? 0;
                             decimal calculatedAmount = catalogPrice * item.Quantity;
 
-                            // Себестоимость из поставок ДО даты отгрузки
                             var supplies = allSupplies
                                 .Where(s => s.ProductId == item.ProductId && s.Supplies.SuppliesDate <= shipment.ShipmentDate)
                                 .ToList();
@@ -158,12 +156,10 @@ namespace Sklad_project_app
 
                         foreach (var item in shipment.ShipmentItems)
                         {
-                            // ★★★ СУММА ИЗ КАТАЛОГА ★★★
                             decimal catalogPrice = item.Product?.Stock?.PurchasePrice ?? 0;
                             decimal calculatedAmount = catalogPrice * item.Quantity;
                             shipmentAmount += calculatedAmount;
 
-                            // Себестоимость из поставок ДО даты отгрузки
                             var supplies = allSupplies
                                 .Where(s => s.ProductId == item.ProductId && s.Supplies.SuppliesDate <= shipment.ShipmentDate)
                                 .ToList();
@@ -173,7 +169,7 @@ namespace Sklad_project_app
                             decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
 
                             decimal cost = avgPrice * item.Quantity;
-                            decimal profit = calculatedAmount - cost;  // ← прибыль от цены из каталога
+                            decimal profit = calculatedAmount - cost;
 
                             shipmentProfit += profit;
                         }
