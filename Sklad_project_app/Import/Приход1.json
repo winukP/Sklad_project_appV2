@@ -1,16 +1,18 @@
 [
   {
     "Article": "000001",
-    "ProductName": "Борщ с говядиной",
+    "ProductName": "Борщ",
     "Quantity": 100,
     "Price": 50,
-    "Date": "2026-04-19T10:00:00"
+    "Date": "2026-04-19T10:00:00",
+    "ExpiryDays": 30
   },
   {
     "Article": "000002",
     "ProductName": "Гречка с курицей",
     "Quantity": 50,
     "Price": 35,
-    "Date": "2026-04-19T10:00:00"
+    "Date": "2026-04-19T10:00:00",
+    "ExpiryDays": 60
   }
 ]

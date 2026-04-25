@@ -28,5 +28,9 @@ namespace Sklad_project_app.Import
         /// Дата поставки
         /// </summary>
         public DateTime Date { get; set; }
+        /// <summary>
+        /// срог годности
+        /// </summary>
+        public int ExpiryDays { get; set; }
     }
 }

@@ -277,7 +277,7 @@ namespace Sklad_project_app
             // 
             lblCategory.AutoSize = true;
             lblCategory.Font = new Font("Arial", 8F);
-            lblCategory.Location = new Point(185, 8);
+            lblCategory.Location = new Point(198, 8);
             lblCategory.Name = "lblCategory";
             lblCategory.Size = new Size(79, 16);
             lblCategory.TabIndex = 2;

@@ -62,9 +62,10 @@ namespace Sklad_project_app
                     {
                         itemCount = shipment.ShipmentItems.Count;
                     }
+                    var totalQuantity = shipment.ShipmentItems?.Sum(i => i.Quantity) ?? 0;
                     totalAmount = shipment.ShipmentItems?.Sum(i => i.Amount) ?? 0;
 
-                    dgvMyShipments.Rows.Add(number, clientName, date, itemCount, CurrencyHelp.Format(totalAmount), shipment.Id);
+                    dgvMyShipments.Rows.Add(number, clientName, date, totalQuantity, CurrencyHelp.Format(totalAmount), shipment.Id);
                     number++;
                 }
             }

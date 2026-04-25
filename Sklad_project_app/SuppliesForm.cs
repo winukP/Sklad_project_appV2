@@ -546,10 +546,10 @@ namespace Sklad_project_app
 
                                 if (product == null)
                                 {
-                                    MessageBox.Show($"Товар '{item.ProductName}' не найден. Сначала добавьте его в каталог.");
-                                    return;
+                                    skippedCount++;
+                                    skippedReasons.Add($"Товар '{item.ProductName}' (арт. {item.Article}) не найден");
+                                    continue;
                                 }
-                                //приход
                                 var supply = new Supplies
                                 {
                                     Id = Guid.NewGuid(),
@@ -557,8 +557,8 @@ namespace Sklad_project_app
                                     UserId = CurrentUser.User.Id,
                                 };
                                 db.Supplies.Add(supply);
-                                db.SaveChanges();
 
+                                // Создание позиции поставки
                                 var supplyItem = new SuppliesItem
                                 {
                                     Id = Guid.NewGuid(),
@@ -569,7 +569,24 @@ namespace Sklad_project_app
                                 };
                                 db.SuppliesItems.Add(supplyItem);
 
-                                //остаток
+                                int totalDays = item.ExpiryDays > 0 ? item.ExpiryDays : 365; 
+                                DateTime expiryDate = item.Date.Date.AddDays(totalDays).ToUniversalTime();
+
+                                var stockBatch = new StockBatch
+                                {
+                                    Id = Guid.NewGuid(),
+                                    ProductId = product.Id,
+                                    SuppliesId = supply.Id,
+                                    Quantity = item.Quantity,
+                                    PurchasePrice = item.Price,
+                                    ExpiryDate = expiryDate,
+                                    TotalDays = totalDays,
+                                    DiscountPercent = 0,
+                                    IsWrittenOff = false
+                                };
+                                db.StockBatches.Add(stockBatch);
+
+                                // Обновление остатка
                                 var stock = db.Stocks.FirstOrDefault(s => s.ProductId == product.Id);
                                 if (stock != null)
                                     stock.Rest += item.Quantity;
@@ -584,6 +601,8 @@ namespace Sklad_project_app
                                     };
                                     db.Stocks.Add(stock);
                                 }
+
+                                importedCount++;
                             }
                             db.SaveChanges();
                         }
@@ -592,7 +611,6 @@ namespace Sklad_project_app
                              $"Файл: {ofd.FileName}\n" +
                              $"Всего строк: {supplies.Count} | Импортировано: {importedCount} | Пропущено: {skippedCount}\n" +
                              $"Время: {DateTime.Now}");
-                        // ↑↑↑ DEBUG-08 ↑↑↑
                         // WARN-04: Пропущенные строки при импорте
                         if (skippedCount > 0)
                         {

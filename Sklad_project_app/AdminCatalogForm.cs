@@ -207,6 +207,7 @@ namespace Sklad_project_app
                     dgvProducts.Columns.Add("colUnit", AppResources.ColUnit);
                     dgvProducts.Columns.Add("colPrice", AppResources.ColPrice);
                     dgvProducts.Columns.Add("colRest", AppResources.ColRest);
+                    dgvProducts.Columns.Add("colDiscount", "Скидка");
                     dgvProducts.Columns.Add("colId", "ID");
                     dgvProducts.Columns["colId"].Visible = false;
 
@@ -216,6 +217,20 @@ namespace Sklad_project_app
                         var rest = "—";
                         var categoryName = "";
                         var unitName = "";
+                        string hasDiscount = "Нет";
+
+                        if (product.Stock != null)
+                        {
+                            bool discountExists = db.StockBatches
+                                .Any(b => b.ProductId == product.Id
+                                       && !b.IsWrittenOff
+                                       && b.Quantity > 0
+                                       && b.DiscountPercent > 0);
+
+                            hasDiscount = discountExists ? "Да" : "Нет";
+                            price = CurrencyHelp.Format(product.Stock.PurchasePrice);
+                            rest = product.Stock.Rest.ToString();
+                        }
 
                         if (product.Stock != null)
                         {
@@ -232,8 +247,13 @@ namespace Sklad_project_app
                             unitName = product.Unit.Name;
                         }
 
-                        dgvProducts.Rows.Add(product.Article, product.Name,
-                            categoryName, unitName, price, rest, product.Id);
+                        var rowIndex = dgvProducts.Rows.Add(product.Article, product.Name,
+                            categoryName, unitName, price, rest, hasDiscount, product.Id);
+
+                        if (hasDiscount == "Да")
+                        {
+                            dgvProducts.Rows[rowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
+                        }
                     }
                 }
             }
@@ -309,6 +329,18 @@ namespace Sklad_project_app
             if (!Guid.TryParse(idValue, out productId))
             {
                 MessageBox.Show(AppResources.MsgProductError);
+                return;
+            }
+            int rest = 0;
+            using (var db = new SkladContext())
+            {
+                var stock = db.Stocks.FirstOrDefault(s => s.ProductId == productId);
+                rest = stock?.Rest ?? 0;
+            }
+            if (rest > 0)
+            {
+                MessageBox.Show($"Нельзя удалить товар, так как на складе есть остаток: {rest} шт.",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

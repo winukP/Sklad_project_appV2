@@ -20,6 +20,7 @@ namespace Sklad_project_app
         {
             InitializeComponent();
             this.Text = AppResources.CatalogTitle;
+            txtProfitFrom.Text = "-1000000";
             lblUserInfo.Text = AppResources.LblStorekeeper
                 + CurrentUser.User.Surname + " " + CurrentUser.User.Name;
         }
@@ -60,6 +61,11 @@ namespace Sklad_project_app
                         .OrderBy(s => s.ShipmentDate)
                         .ToList();
 
+                    // Загружаем все поставки для расчёта себестоимости
+                    var allSupplies = db.SuppliesItems
+                        .Include(s => s.Supplies)
+                        .ToList();
+
                     int totalCount = allShipments.Count;
 
                     DateTime dateFrom = dtpDateFrom.Value.Date;
@@ -92,31 +98,39 @@ namespace Sklad_project_app
                         }
                     }
 
-                    decimal profitFrom = 0;
+                    decimal profitFrom = -1000000;
                     decimal profitTo = 1000000;
 
-                    decimal.TryParse(txtProfitFrom.Text, out profitFrom);
-                    decimal.TryParse(txtProfitTo.Text, out profitTo);
+                    if (!string.IsNullOrWhiteSpace(txtProfitFrom.Text))
+                        decimal.TryParse(txtProfitFrom.Text, out profitFrom);
+                    if (!string.IsNullOrWhiteSpace(txtProfitTo.Text))
+                        decimal.TryParse(txtProfitTo.Text, out profitTo);
 
                     if (profitFrom > profitTo)
                     {
                         (profitFrom, profitTo) = (profitTo, profitFrom);
                     }
+
                     var afterProfit = new List<Shipment>();
                     foreach (var shipment in afterClient)
                     {
                         decimal shipmentProfit = 0;
                         foreach (var item in shipment.ShipmentItems)
                         {
-                            var supplies = db.SuppliesItems
-                                .Where(s => s.ProductId == item.ProductId)
+                            // ★★★ СУММА ИЗ КАТАЛОГА (для фильтрации) ★★★
+                            decimal catalogPrice = item.Product?.Stock?.PurchasePrice ?? 0;
+                            decimal calculatedAmount = catalogPrice * item.Quantity;
+
+                            // Себестоимость из поставок ДО даты отгрузки
+                            var supplies = allSupplies
+                                .Where(s => s.ProductId == item.ProductId && s.Supplies.SuppliesDate <= shipment.ShipmentDate)
                                 .ToList();
 
                             decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
                             decimal totalQty = supplies.Sum(s => s.Quantity);
                             decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
 
-                            shipmentProfit += item.Amount - (avgPrice * item.Quantity);
+                            shipmentProfit += calculatedAmount - (avgPrice * item.Quantity);
                         }
 
                         if (shipmentProfit >= profitFrom && shipmentProfit <= profitTo)
@@ -144,12 +158,14 @@ namespace Sklad_project_app
 
                         foreach (var item in shipment.ShipmentItems)
                         {
-                            shipmentAmount += item.Amount;
+                            // ★★★ СУММА ИЗ КАТАЛОГА ★★★
+                            decimal catalogPrice = item.Product?.Stock?.PurchasePrice ?? 0;
+                            decimal calculatedAmount = catalogPrice * item.Quantity;
+                            shipmentAmount += calculatedAmount;
 
-                            var productId = item.ProductId;
-
-                            var supplies = db.SuppliesItems
-                                .Where(s => s.ProductId == productId)
+                            // Себестоимость из поставок ДО даты отгрузки
+                            var supplies = allSupplies
+                                .Where(s => s.ProductId == item.ProductId && s.Supplies.SuppliesDate <= shipment.ShipmentDate)
                                 .ToList();
 
                             decimal totalCost = supplies.Sum(s => s.PurchasePrice * s.Quantity);
@@ -157,7 +173,7 @@ namespace Sklad_project_app
                             decimal avgPrice = totalQty > 0 ? totalCost / totalQty : 0;
 
                             decimal cost = avgPrice * item.Quantity;
-                            decimal profit = item.Amount - cost;
+                            decimal profit = calculatedAmount - cost;  // ← прибыль от цены из каталога
 
                             shipmentProfit += profit;
                         }
@@ -173,16 +189,30 @@ namespace Sklad_project_app
                         );
                     }
 
-                    dgvReports.Rows.Add("ИТОГО:", "", CurrencyHelp.Format(totalAmount), CurrencyHelp.Format(totalProfit));
+                    // Убытки
+                    var allWriteOffs = db.WriteOffs.ToList();
+                    var filteredByDate = new List<WriteOff>();
+                    foreach (var w in allWriteOffs)
+                    {
+                        if (w.WriteOffDate >= dateFrom && w.WriteOffDate <= dateTo)
+                        {
+                            filteredByDate.Add(w);
+                        }
+                    }
+
+                    decimal totalWriteOffLoss = filteredByDate.Sum(w => w.LossAmount);
+                    string formattedLoss = CurrencyHelp.Format(totalWriteOffLoss);
+                    dgvReports.Rows.Add("Убыток (списанное):", "", "", $"-{formattedLoss}");
+                    decimal netProfit = totalProfit - totalWriteOffLoss;
+                    dgvReports.Rows.Add("ИТОГО:", "", CurrencyHelp.Format(totalAmount), CurrencyHelp.Format(netProfit));
                 }
             }
             catch (Exception ex)
             {
-                Logger.Fatal($"FATAL-04: Соединение с базой данных утеряно и не восстановлено.\n" +
+                Logger.Fatal($"FATAL-04: Ошибка при формировании отчёта.\n" +
                              $"Активный пользователь: {CurrentUser.User?.Login} | Роль: {CurrentUser.RoleName}\n" +
-                             $"Текущая операция: Загрузка каталога товаров\n" +
                              $"Исключение: {ex.GetType()} --- {ex.Message}\n" +
-                             $"Приложение будет завершено.", ex);
+                             $"Стек: {ex.StackTrace}", ex);
                 MessageBox.Show("Потеряно соединение с базой данных.\nПриложение будет закрыто.",
                     "Критическая ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1);

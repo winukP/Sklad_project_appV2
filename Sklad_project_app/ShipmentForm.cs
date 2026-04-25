@@ -166,7 +166,6 @@ namespace Sklad_project_app
 
                         if (product.Stock != null)
                         {
-                            // Получаем максимальную скидку для товара
                             var maxDiscount = db.StockBatches
                                 .Where(b => b.ProductId == product.Id && !b.IsWrittenOff && b.Quantity > 0)
                                 .OrderByDescending(b => b.DiscountPercent)
@@ -236,83 +235,6 @@ namespace Sklad_project_app
             }
         }
 
-        private void dgvShipment_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            var idValue = dgvShipment.Rows[e.RowIndex].Cells["colId"].Value?.ToString();
-            if (!Guid.TryParse(idValue, out Guid productId)) return;
-
-            int rest = int.TryParse(dgvShipment.Rows[e.RowIndex].Cells["colRest"].Value?.ToString(), out int r) ? r : 0;
-            int currentQty = _shipmentItems.ContainsKey(productId) ? _shipmentItems[productId].Quantity : 0;
-            string productName = dgvShipment.Rows[e.RowIndex].Cells["colName"].Value?.ToString();
-
-            if (e.ColumnIndex == dgvShipment.Columns["colPlus"].Index)
-            {
-                if (currentQty < rest)
-                {
-                    int newQty = currentQty + 1;
-
-                    try
-                    {
-                        var batches = GetBatchesForShipment(productId, newQty);
-                        decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
-
-                        // ПРАВИЛЬНО: создаём объект ShipmentItemInfo
-                        _shipmentItems[productId] = new ShipmentItemInfo
-                        {
-                            ProductId = productId,
-                            ProductName = productName,
-                            Quantity = newQty,
-                            TotalPrice = totalPrice,
-                            Batches = batches
-                        };
-
-                        dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show(AppResources.MsgNotEnough);
-                }
-            }
-            else if (e.ColumnIndex == dgvShipment.Columns["colMinus"].Index)
-            {
-                if (currentQty > 0)
-                {
-                    int newQty = currentQty - 1;
-
-                    if (newQty == 0)
-                    {
-                        _shipmentItems.Remove(productId);
-                    }
-                    else
-                    {
-                        var batches = GetBatchesForShipment(productId, newQty);
-                        decimal totalPrice = batches.Sum(b => b.batch.PurchasePrice * (1 - b.batch.DiscountPercent / 100) * b.take);
-
-                        // ПРАВИЛЬНО: создаём объект ShipmentItemInfo
-                        _shipmentItems[productId] = new ShipmentItemInfo
-                        {
-                            ProductId = productId,
-                            ProductName = productName,
-                            Quantity = newQty,
-                            TotalPrice = totalPrice,
-                            Batches = batches
-                        };
-                    }
-
-                    dgvShipment.Rows[e.RowIndex].Cells["colQty"].Value = newQty.ToString();
-                }
-            }
-
-            UpdateTotal();
-        }
-
         private void UpdateTotal()
         {
             int total = _shipmentItems.Values.Sum(i => i.Quantity);
@@ -341,10 +263,8 @@ namespace Sklad_project_app
                 try
                 {
                     decimal totalAmount = 0;
-                    // Проверка остатков
                     foreach (var item in _shipmentItems.Values)
                     {
-                        // Получаем актуальный остаток из БД
                         var available = db.StockBatches
                             .Where(b => b.ProductId == item.ProductId && !b.IsWrittenOff && b.Quantity > 0)
                             .Sum(b => b.Quantity);
@@ -363,7 +283,6 @@ namespace Sklad_project_app
                         }
                     }
 
-                    // Создаём клиента
                     var foundClient = db.Clients.FirstOrDefault(c => c.Name == clientName);
                     if (foundClient == null)
                     {
@@ -372,7 +291,6 @@ namespace Sklad_project_app
                         db.SaveChanges();
                     }
 
-                    // Создаём отгрузку
                     var newShipment = new Shipment
                     {
                         Id = Guid.NewGuid(),
@@ -390,7 +308,6 @@ namespace Sklad_project_app
                          $"Позиций: {_shipmentItems.Count} | Сумма: {totalAmount:F2} руб.\n" +
                          $"Время: {DateTime.Now}");
 
-                    // Сохраняем товары и списываем остатки
                     foreach (var item in _shipmentItems.Values)
                     {
                         foreach (var (batch, take) in item.Batches)
@@ -410,7 +327,7 @@ namespace Sklad_project_app
                             });
                         }
 
-                        // Обновляем общий остаток
+                        // общий остаток
                         var stock = db.Stocks.FirstOrDefault(s => s.ProductId == item.ProductId);
                         if (stock != null)
                         {
@@ -515,7 +432,6 @@ namespace Sklad_project_app
             {
                 //Получаем текущее количество
                 int currentQty = _shipmentItems.ContainsKey(productId) ? _shipmentItems[productId].Quantity : 0;
-                MessageBox.Show($"currentQty = {currentQty}, rest = {rest}");
                 if (currentQty + 1 <= rest)
                 {
                     int newQty = currentQty + 1;
